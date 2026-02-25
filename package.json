@@ -1,0 +1,27 @@
+{
+  "name": "suu3-blog-next",
+  "private": true,
+  "description": "Next.js blog migrated from Gatsby",
+  "version": "2.0.0",
+  "author": "suu3",
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "typescript": "^5.8.2",
+    "tailwindcss": "^4.1.12",
+    "@tailwindcss/postcss": "^4.1.12"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}

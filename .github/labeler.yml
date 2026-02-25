@@ -1,0 +1,9 @@
+"👷 ci/cd":
+  - changed-files:
+      - any-glob-to-any-file: ".github/**/*.yml"
+"✨ 기능 업데이트":
+  - changed-files:
+      - any-glob-to-any-file: ["src/**"]
+"📝 게시글 업데이트":
+  - changed-files:
+      - any-glob-to-any-file: ["content/**"]

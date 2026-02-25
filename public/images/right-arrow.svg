@@ -1,0 +1,14 @@
+  <svg
+    width="9"
+    height="16"
+    viewBox="0 0 9 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <path
+    d="M1 1L8 8L0.999999 15"
+    stroke="var(--color-bg-surface-02, #000000)"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    />
+</svg>
