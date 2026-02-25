@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getAllPosts, splitSlugToSegments } from '@/lib/posts';
+import { getAllPosts } from '@/lib/posts';
+import { splitSlugToSegments } from '@/lib/slug';
 
 type Props = {
   params: Promise<{ category: string }>;
