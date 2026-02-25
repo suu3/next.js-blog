@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { PostSummary } from '@/lib/posts';
-import { splitSlugToSegments } from '@/lib/posts';
+import { splitSlugToSegments } from '@/lib/slug';
 
 type Props = {
   posts: PostSummary[];
