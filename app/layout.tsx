@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import Gnb from '@/components/gnb';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,24 +31,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="sticky top-0 z-20 border-b border-[#2a2b31] bg-white/95 backdrop-blur">
           <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
-            <Link href="/" className="text-xl font-black tracking-tight">
+            <Link href="/" className="y2k-logo text-xl font-black tracking-tight">
               Suu.Blog
             </Link>
-            <nav className="flex items-center gap-2 text-sm font-medium">
-              <Link href="/" className="rounded-md border border-[#2a2b31] px-3 py-1.5 hover:bg-[#ffddca]">
-                홈
-              </Link>
-              <Link
-                href="/category"
-                className="rounded-md border border-[#2a2b31] px-3 py-1.5 hover:bg-[#ffddca]"
-              >
-                카테고리
-              </Link>
-            </nav>
+            <Gnb />
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
+        <div className="page-shell">
+          <main className="mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
+          <footer className="mt-auto border-t border-[#2a2b31] bg-[#f6f3ef]">
+            <div className="mx-auto flex h-20 w-full max-w-5xl flex-col items-center justify-center gap-1 px-4 text-xs text-gray-600">
+              <p className="font-semibold text-[#2a2b31]">@Suu3</p>
+              <p>© 2024, Built with Gatsby</p>
+            </div>
+          </footer>
+        </div>
       </body>
     </html>
   );

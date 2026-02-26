@@ -8,7 +8,8 @@
   --line: #2a2b31;
   --theme: #ff6737;
   --theme-soft: #ffddca;
-  --bg: #f7f7f7;
+  --bg: #eceae6;
+  --y2k-display: "Megavolt", "Sofachrome", "BD Geminis", "Sneakers", "Arial Black", "Pretendard Variable", sans-serif;
 }
 
 * {
@@ -17,6 +18,9 @@
 
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -24,4 +28,96 @@ body {
 
 a {
   color: inherit;
+}
+
+.page-shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #eceae6;
+  background-image: radial-gradient(circle at 84% -5%, #f7c532 0 110px, transparent 111px), url("/images/background.svg");
+  background-size: auto, 1700px auto;
+  background-position: top right, center top;
+  background-repeat: no-repeat, no-repeat;
+}
+
+main {
+  flex: 1;
+}
+
+.neo-frame {
+  box-shadow: 7px 7px 0 #2a2b31;
+}
+
+.neo-gnb-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.neo-gnb-link:hover {
+  transform: translate(-1px, -1px);
+  background: var(--theme-soft);
+  box-shadow: 2px 2px 0 0 var(--line);
+}
+
+.neo-gnb-link.is-active {
+  background: var(--theme);
+  color: white;
+  box-shadow: 2px 2px 0 0 var(--line);
+}
+
+.neo-gnb-link-label {
+  position: relative;
+  z-index: 2;
+}
+
+.y2k-logo {
+  font-family: var(--y2k-display);
+  letter-spacing: 0.02em;
+}
+
+.y2k-hero {
+  box-shadow: 6px 6px 0 0 #2a2b31;
+}
+
+.y2k-title {
+  font-family: var(--y2k-display);
+  letter-spacing: 0.02em;
+  color: #2a2b31;
+}
+
+.hero-icon-left {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  opacity: 0.3;
+}
+
+.hero-icon-right {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  opacity: 0.35;
+}
+
+.y2k-stars {
+  position: absolute;
+  right: 62px;
+  top: 8px;
+  width: 140px;
+  height: 110px;
+  background-image: radial-gradient(circle, #fff 0 4px, transparent 4px), radial-gradient(circle, #ff6737 0 2px, transparent 2px), radial-gradient(circle, #2a2b31 0 1.5px, transparent 1.5px);
+  background-position: 6% 20%, 56% 55%, 82% 10%;
+  background-repeat: no-repeat;
+}
+
+.y2k-card-image {
+  filter: saturate(1.05) contrast(1.05);
 }

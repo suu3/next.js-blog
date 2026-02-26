@@ -10,6 +10,7 @@ type FrontMatter = {
   description?: string;
   category?: string;
   tag?: string[];
+  thumbnail?: string;
 };
 
 export type PostSummary = {
@@ -19,6 +20,7 @@ export type PostSummary = {
   description: string;
   category: string;
   tags: string[];
+  thumbnail: string;
 };
 
 export type PostDetail = PostSummary & {
@@ -59,6 +61,9 @@ function parsePost(filePath: string): PostDetail {
     description: frontmatter.description ?? '',
     category: frontmatter.category ?? '미분류',
     tags: frontmatter.tag ?? [],
+    thumbnail: frontmatter.thumbnail?.startsWith('http') || frontmatter.thumbnail?.startsWith('/')
+      ? frontmatter.thumbnail
+      : '/images/dummy.jpg',
     content,
   } satisfies PostDetail;
 }
