@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { css } from '@/styled-system/css';
 
 export default function PostActions() {
   const pathname = usePathname();
@@ -32,20 +33,20 @@ export default function PostActions() {
   };
 
   return (
-    <div className="mt-4 rounded-lg border border-[var(--line)] bg-[var(--surface)] p-2">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className={css({ mt: '1rem', borderRadius: '0.5rem', border: '1px solid var(--line)', bg: 'var(--surface)', p: '0.5rem' })}>
+      <div className={css({ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' })}>
         <button
           type="button"
           onClick={onShare}
-          className="inline-flex h-9 items-center justify-center rounded-md border border-[var(--line)] bg-[var(--theme-soft)] px-3 text-xs font-semibold transition hover:-translate-y-0.5"
+          className={css({ display: 'inline-flex', h: '2.25rem', alignItems: 'center', justifyContent: 'center', borderRadius: '0.375rem', border: '1px solid var(--line)', bg: 'var(--theme-soft)', px: '0.75rem', fontSize: '0.75rem', fontWeight: '600', transition: 'all 0.15s ease', _hover: { transform: 'translateY(-2px)' } })}
         >
-          {copied ? '링크 복사됨!' : '공유하기'}
+          {copied ? '링크 복사됨' : '공유하기'}
         </button>
         <a
           href={translateUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex h-9 items-center justify-center rounded-md border border-[var(--line)] bg-[var(--theme-soft)] px-3 text-xs font-semibold transition hover:-translate-y-0.5"
+          className={css({ display: 'inline-flex', h: '2.25rem', alignItems: 'center', justifyContent: 'center', borderRadius: '0.375rem', border: '1px solid var(--line)', bg: 'var(--theme-soft)', px: '0.75rem', fontSize: '0.75rem', fontWeight: '600', transition: 'all 0.15s ease', _hover: { transform: 'translateY(-2px)' } })}
         >
           Translate
         </a>
@@ -53,3 +54,4 @@ export default function PostActions() {
     </div>
   );
 }
+

@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { css, cx } from '@/styled-system/css';
 import type { PostSummary } from '@/lib/posts';
 import { splitSlugToSegments } from '@/lib/slug';
 
@@ -11,6 +13,21 @@ type Props = {
 };
 
 const POSTS_PER_PAGE = 6;
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0 },
+};
 
 export default function PostSearch({ posts }: Props) {
   const [query, setQuery] = useState('');
@@ -88,11 +105,11 @@ export default function PostSearch({ posts }: Props) {
   const pagedPosts = filtered.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
 
   return (
-    <section className="neo-frame rounded-[22px] border-2 border-[var(--line)] bg-[var(--theme-soft)] p-3 md:p-4">
-      <div className="rounded-2xl border-2 border-[var(--line)] bg-[var(--surface)] px-4 py-3">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-lg font-black tracking-tight">Latest</h2>
-          <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
+    <section className={cx('neo-frame', css({ borderRadius: '22px', border: '2px solid var(--line)', bg: 'var(--theme-soft)', p: { base: '0.75rem', md: '1rem' } }))}>
+      <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', px: '1rem', py: '0.75rem' })}>
+        <div className={css({ display: 'flex', flexDir: { base: 'column', md: 'row' }, gap: '0.75rem', alignItems: { md: 'center' }, justifyContent: { md: 'space-between' } })}>
+          <h2 className={css({ fontSize: '1.125rem', fontWeight: '900', letterSpacing: '-0.025em' })}>Latest</h2>
+          <div className={css({ display: 'flex', w: 'full', flexDir: { base: 'column', md: 'row' }, gap: '0.5rem', alignItems: { md: 'center' }, width: { md: 'auto' } })}>
             <input
               id="post-search"
               type="search"
@@ -102,29 +119,29 @@ export default function PostSearch({ posts }: Props) {
                 setQuery(event.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-full border-2 border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm outline-none md:w-84"
+              className={css({ w: { base: 'full', md: '21rem' }, borderRadius: '9999px', border: '2px solid var(--line)', bg: 'var(--surface)', px: '1rem', py: '0.5rem', fontSize: '0.875rem', outline: 'none' })}
             />
-            <p className="text-sm font-semibold text-[var(--muted)]">총 {filtered.length}개의 포스트</p>
+            <p className={css({ fontSize: '0.875rem', fontWeight: '600', color: 'var(--muted)' })}>총 {filtered.length}개의 포스트</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="space-y-3">
-          <div className="rounded-2xl border-2 border-[var(--line)] bg-[var(--surface)] p-3">
-            <div className="flex items-center gap-2">
-              <Image src="/images/icon.png" alt="profile icon" width={28} height={28} className="h-7 w-7" />
+      <div className={css({ mt: '1rem', display: 'grid', gap: '1rem', gridTemplateColumns: { base: '1fr', md: '220px minmax(0, 1fr)' } })}>
+        <aside className={css({ display: 'flex', flexDir: 'column', gap: '0.75rem' })}>
+          <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', p: '0.75rem' })}>
+            <div className={css({ display: 'flex', alignItems: 'center', gap: '0.5rem' })}>
+              <Image src="/images/icon.png" alt="profile icon" width={28} height={28} className={css({ h: '1.75rem', w: '1.75rem' })} />
               <div>
-                <p className="text-xs text-[var(--muted)]">@Suu3</p>
-                <p className="text-sm font-bold text-[var(--theme)]">Developer</p>
+                <p className={css({ fontSize: '0.75rem', color: 'var(--muted)' })}>@Suu3</p>
+                <p className={css({ fontSize: '0.875rem', fontWeight: '700', color: 'var(--theme)' })}>Developer</p>
               </div>
             </div>
-            <p className="mt-3 text-xs text-[var(--muted)]">Your doing great, keep practicing.</p>
+            <p className={css({ mt: '0.75rem', fontSize: '0.75rem', color: 'var(--muted)' })}>Your doing great, keep practicing.</p>
           </div>
 
-          <div className="rounded-2xl border-2 border-[var(--line)] bg-[var(--surface)] p-3">
-            <p className="mb-2 text-sm font-black">Category</p>
-            <ul className="space-y-1 text-sm">
+          <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', p: '0.75rem' })}>
+            <p className={css({ mb: '0.5rem', fontSize: '0.875rem', fontWeight: '900' })}>Category</p>
+            <ul className={css({ display: 'flex', flexDir: 'column', gap: '0.25rem', fontSize: '0.875rem' })}>
               {categoryCounts.map((category) => {
                 const isActive = selectedCategory === category.name;
                 return (
@@ -135,12 +152,26 @@ export default function PostSearch({ posts }: Props) {
                         setSelectedCategory(category.name);
                         setPage(1);
                       }}
-                      className={`flex w-full items-center justify-between rounded-lg border px-2 py-1 text-left transition ${
-                        isActive ? 'border-[var(--line)] bg-[var(--theme-soft)] font-semibold' : 'border-transparent hover:border-[var(--line)]'
-                      }`}
+                      className={cx(
+                        css({
+                          display: 'flex',
+                          w: 'full',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          borderRadius: '0.5rem',
+                          border: '1px solid transparent',
+                          px: '0.5rem',
+                          py: '0.25rem',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }),
+                        isActive
+                          ? css({ borderColor: 'var(--line)', bg: 'var(--theme-soft)', fontWeight: '600' })
+                          : css({ _hover: { borderColor: 'var(--line)' } }),
+                      )}
                     >
                       <span>{category.name}</span>
-                      <span className="text-xs text-[var(--muted)]">({category.count})</span>
+                      <span className={css({ fontSize: '0.75rem', color: 'var(--muted)' })}>({category.count})</span>
                     </button>
                   </li>
                 );
@@ -148,9 +179,9 @@ export default function PostSearch({ posts }: Props) {
             </ul>
           </div>
 
-          <div className="rounded-2xl border-2 border-[var(--line)] bg-[var(--surface)] p-3">
-            <p className="mb-2 text-sm font-black">Tag</p>
-            <div className="flex flex-wrap gap-1.5 text-xs">
+          <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', p: '0.75rem' })}>
+            <p className={css({ mb: '0.5rem', fontSize: '0.875rem', fontWeight: '900' })}>Tag</p>
+            <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', fontSize: '0.75rem' })}>
               {tagCounts.map((tag) => (
                 <button
                   key={tag.name}
@@ -159,9 +190,10 @@ export default function PostSearch({ posts }: Props) {
                     setSelectedTag(tag.name);
                     setPage(1);
                   }}
-                  className={`rounded-md border px-2 py-1 transition ${
-                    selectedTag === tag.name ? 'border-[var(--line)] bg-[var(--theme-soft)]' : 'border-[var(--line)] bg-[var(--surface)]'
-                  }`}
+                  className={cx(
+                    css({ borderRadius: '0.375rem', border: '1px solid var(--line)', px: '0.5rem', py: '0.25rem', transition: 'all 0.15s ease' }),
+                    selectedTag === tag.name ? css({ bg: 'var(--theme-soft)' }) : css({ bg: 'var(--surface)' }),
+                  )}
                 >
                   {tag.name === 'All' ? 'All' : `#${tag.name}`}
                 </button>
@@ -170,56 +202,91 @@ export default function PostSearch({ posts }: Props) {
           </div>
         </aside>
 
-        <div className="space-y-4">
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {pagedPosts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/posts/${splitSlugToSegments(post.slug).join('/')}`}
-                  className="group block h-full rounded-2xl border-2 border-[var(--line)] bg-[var(--surface)] p-2 transition duration-200 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--line)]"
+        <div className={css({ display: 'flex', flexDir: 'column', gap: '1rem' })}>
+          <motion.ul 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            key={`${selectedCategory}-${selectedTag}-${page}`}
+            className={css({ display: 'grid', gap: '0.75rem', gridTemplateColumns: { base: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' } })}
+          >
+            <AnimatePresence mode="popLayout">
+              {pagedPosts.map((post) => (
+                <motion.li 
+                  key={post.slug}
+                  variants={itemVariants}
+                  layout
+                  initial="hidden"
+                  animate="show"
+                  exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <div className="relative overflow-hidden rounded-xl border-2 border-[var(--line)]">
-                    <Image
-                      src={post.thumbnail || '/images/dummy.jpg'}
-                      alt={post.title}
-                      width={320}
-                      height={180}
-                      className="y2k-card-image h-32 w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-                    />
-                    <div className="absolute inset-0 bg-black/35" />
+                  <Link
+                    href={`/posts/${splitSlugToSegments(post.slug).join('/')}`}
+                    className={cx(
+                      'post-card-group',
+                      css({
+                        display: 'block',
+                        h: 'full',
+                        borderRadius: '1rem',
+                        border: '2px solid var(--line)',
+                        bg: 'var(--surface)',
+                        p: '0.5rem',
+                        transition: 'all 0.2s ease',
+                        _hover: { transform: 'translateY(-2px)', boxShadow: '4px 4px 0 0 var(--line)' },
+                      }),
+                    )}
+                  >
+                    <div className={css({ position: 'relative', overflow: 'hidden', borderRadius: '0.75rem', border: '2px solid var(--line)' })}>
+                      <Image
+                        src={post.thumbnail || '/images/dummy.jpg'}
+                        alt={post.title}
+                        width={320}
+                        height={180}
+                        className={cx(
+                          'y2k-card-image',
+                          css({ h: '8rem', w: 'full', objectFit: 'cover', transition: 'transform 0.2s ease' }),
+                          css({
+                            '.post-card-group:hover &': {
+                              transform: 'scale(1.02)',
+                            },
+                          }),
+                        )}
+                      />
+                      <div className={css({ position: 'absolute', inset: 0, bg: 'rgba(0, 0, 0, 0.35)' })} />
 
-                    {post.tags[0] ? (
-                      <p className="absolute left-2 top-2 z-10 rounded border border-[var(--line)] bg-[var(--theme-soft)] px-2 py-0.5 font-mono text-[10px]">
-                        #{post.tags[0]}
+                      {post.tags[0] ? (
+                        <p className={css({ position: 'absolute', left: '0.5rem', top: '0.5rem', zIndex: 10, borderRadius: '0.25rem', border: '1px solid var(--line)', bg: 'var(--theme-soft)', px: '0.5rem', py: '0.125rem', fontFamily: 'FiraCode-Medium, monospace', fontSize: '10px' })}>
+                          #{post.tags[0]}
+                        </p>
+                      ) : null}
+
+                      <p className={css({ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', fontSize: '0.75rem', fontWeight: '900', letterSpacing: '0.025em', color: 'white' })}>
+                        {post.category}
                       </p>
-                    ) : null}
+                    </div>
 
-                    <p className="absolute inset-0 z-10 flex items-center justify-center text-center text-xs font-black tracking-wide text-white">
-                      {post.category}
-                    </p>
-                  </div>
+                    <h3 className={css({ mt: '0.5rem', fontSize: '0.875rem', fontWeight: '900', lineHeight: '1.25rem', lineClamp: '2' })}>{post.title}</h3>
+                    <p className={css({ mt: '0.25rem', fontSize: '0.75rem', color: 'var(--muted)', lineClamp: '2' })}>{post.description}</p>
+                    <div className={css({ mt: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' })}>
+                      {post.tags.slice(0, 2).map((tag) => (
+                        <span key={tag} className={css({ borderRadius: '0.25rem', bg: 'var(--theme-soft)', px: '0.375rem', py: '0.125rem', fontSize: '10px' })}>
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                    <p className={css({ mt: '0.75rem', textAlign: 'right', fontFamily: 'FiraCode-Medium, monospace', fontSize: '10px', color: 'var(--muted)' })}>{post.date}</p>
+                  </Link>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
 
-                  <h3 className="mt-2 line-clamp-2 text-sm font-black leading-5">{post.title}</h3>
-                  <p className="mt-1 line-clamp-2 text-xs text-[var(--muted)]">{post.description}</p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {post.tags.slice(0, 2).map((tag) => (
-                      <span key={tag} className="rounded bg-[var(--theme-soft)] px-1.5 py-0.5 text-[10px]">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="mt-3 text-right font-mono text-[10px] text-[var(--muted)]">{post.date}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex items-center justify-center gap-2 border-t-2 border-[var(--line)] pt-4">
+          <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', borderTop: '2px solid var(--line)', pt: '1rem' })}>
             <button
               type="button"
               disabled={currentPage <= 1}
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              className="h-7 w-7 rounded border border-[var(--line)] bg-[var(--surface)] text-sm disabled:opacity-40"
+              className={css({ h: '1.75rem', w: '1.75rem', borderRadius: '0.25rem', border: '1px solid var(--line)', bg: 'var(--surface)', fontSize: '0.875rem', _disabled: { opacity: 0.4 } })}
               aria-label="previous"
             >
               {'<'}
@@ -229,9 +296,10 @@ export default function PostSearch({ posts }: Props) {
                 key={pageNumber}
                 type="button"
                 onClick={() => setPage(pageNumber)}
-                className={`h-7 w-7 rounded border border-[var(--line)] text-xs ${
-                  pageNumber === currentPage ? 'bg-[var(--theme)] text-white' : 'bg-[var(--surface)]'
-                }`}
+                className={cx(
+                  css({ h: '1.75rem', w: '1.75rem', borderRadius: '0.25rem', border: '1px solid var(--line)', fontSize: '0.75rem' }),
+                  pageNumber === currentPage ? css({ bg: 'var(--theme)', color: 'white' }) : css({ bg: 'var(--surface)' }),
+                )}
               >
                 {pageNumber}
               </button>
@@ -240,7 +308,7 @@ export default function PostSearch({ posts }: Props) {
               type="button"
               disabled={currentPage >= totalPages}
               onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-              className="h-7 w-7 rounded border border-[var(--line)] bg-[var(--surface)] text-sm disabled:opacity-40"
+              className={css({ h: '1.75rem', w: '1.75rem', borderRadius: '0.25rem', border: '1px solid var(--line)', bg: 'var(--surface)', fontSize: '0.875rem', _disabled: { opacity: 0.4 } })}
               aria-label="next"
             >
               {'>'}

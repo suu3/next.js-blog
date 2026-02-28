@@ -9,7 +9,7 @@ export type TocItem = {
 export function extractHeadings(content: string): TocItem[] {
   return content
     .split('\n')
-    .map((line) => line.match(/^(##|###)\s+(.*)$/))
+    .map((line) => line.replace(/\r$/, '').trimStart().match(/^(##|###)\s+(.+)/))
     .filter((line): line is RegExpMatchArray => Boolean(line))
     .map((line) => ({
       id: slugifyHeading(line[2]),

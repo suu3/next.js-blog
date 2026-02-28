@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { css, cx } from '@/styled-system/css';
 import Gnb from '@/components/gnb';
-import ThemeBtn from '@/components/theme-btn';
 import MobileScrollControls from '@/components/mobile-scroll-controls';
+import Providers from '@/components/providers';
+import ThemeBtn from '@/components/theme-btn';
+import * as motion from 'framer-motion/client';
+import '@/styled-system/styles.css';
+import 'prismjs/themes/prism-tomorrow.css';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -29,31 +34,77 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <body className="light" data-theme="light">
-        <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--surface)]/95 backdrop-blur">
-          <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-3 px-4">
-            <Link href="/" className="y2k-logo text-xl font-black tracking-tight">
-              Suu.Blog
-            </Link>
-            <div className="flex items-center gap-2">
-              <Gnb />
-              <ThemeBtn />
+    <html lang="ko" suppressHydrationWarning>
+      <body>
+        <Providers>
+          <header
+            className={css({
+              position: 'sticky',
+              top: 0,
+              zIndex: 20,
+              borderBottom: '1px solid var(--line)',
+              background: 'color-mix(in srgb, var(--surface) 95%, transparent)',
+              backdropFilter: 'blur(8px)',
+            })}
+          >
+            <div
+              className={css({
+                mx: 'auto',
+                display: 'flex',
+                h: '4rem',
+                w: 'full',
+                maxW: '64rem',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+                px: '1rem',
+              })}
+            >
+              <Link href="/" className={cx('y2k-logo', css({ fontSize: '1.25rem', fontWeight: '900', letterSpacing: '-0.025em' }))}>
+                Suu.Blog
+              </Link>
+              <div className={css({ display: 'flex', alignItems: 'center', gap: '0.5rem' })}>
+                <Gnb />
+                <ThemeBtn />
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        <div className="page-shell">
-          <main className="mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
-          <MobileScrollControls />
-          <footer className="mt-auto border-t border-[var(--line)] bg-[var(--surface)]">
-            <div className="mx-auto flex h-20 w-full max-w-5xl flex-col items-center justify-center gap-1 px-4 text-xs text-[var(--muted)]">
-              <p className="font-semibold text-[var(--text)]">@Suu3</p>
-              <p>© 2024, Built with Gatsby</p>
-            </div>
-          </footer>
-        </div>
+          <div className="page-shell">
+            <motion.main
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className={css({ mx: 'auto', w: 'full', maxW: '64rem', px: '1rem', py: '2rem' })}
+            >
+              {children}
+            </motion.main>
+            <MobileScrollControls />
+            <footer className={css({ mt: 'auto', borderTop: '1px solid var(--line)', bg: 'var(--surface)' })}>
+              <div
+                className={css({
+                  mx: 'auto',
+                  display: 'flex',
+                  h: '5rem',
+                  w: 'full',
+                  maxW: '64rem',
+                  flexDir: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.25rem',
+                  px: '1rem',
+                  fontSize: '0.75rem',
+                  color: 'var(--muted)',
+                })}
+              >
+                <p className={css({ fontWeight: '600', color: 'var(--text)' })}>@Suu3</p>
+                <p>ⓒ 2024, Built with Gatsby</p>
+              </div>
+            </footer>
+          </div>
+        </Providers>
       </body>
     </html>
   );
 }
+

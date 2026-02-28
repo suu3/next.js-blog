@@ -1,6 +1,5 @@
 @import url("https://use.typekit.net/njr2div.css");
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
-@import "tailwindcss";
 
 @font-face {
   font-family: "FiraCode-Medium";
@@ -9,95 +8,108 @@
   font-style: normal;
 }
 
-:root {
-  --color-theme-01: #ff6737;
-  --color-theme-02: #fc8755;
-  --color-theme-03: #ffddca;
-  --color-theme-04: #f3efec;
-  --color-bg-surface: #2a2b31;
-  --color-bg-surface-02: #2a2b31;
-  --color-neutral-01: #60616a;
-  --color-neutral-02: #9597a1;
-  --color-neutral-03: #ebebeb;
-  --color-neutral-04: #fbfbfb;
-  --color-background: #ffffff;
+@layer base {
+  :root {
+    --color-theme-01: #ff6737;
+    --color-theme-02: #fc8755;
+    --color-theme-03: #ffddca;
+    --color-theme-04: #f3efec;
+    --color-bg-surface: #2a2b31;
+    --color-bg-surface-02: #2a2b31;
+    --color-neutral-01: #60616a;
+    --color-neutral-02: #9597a1;
+    --color-neutral-03: #ebebeb;
+    --color-neutral-04: #fbfbfb;
+    --color-background: #ffffff;
 
-  --surface: var(--color-background);
-  --text: var(--color-bg-surface-02);
-  --muted: var(--color-neutral-02);
-  --line: var(--color-neutral-01);
-  --theme: var(--color-theme-01);
-  --theme-soft: var(--color-theme-04);
-  --bg: var(--color-background);
-  --y2k-display: "Megavolt", "Sofachrome", "BD Geminis", "Sneakers", "Arial Black", "Pretendard Variable", sans-serif;
-}
+    --surface: var(--color-background);
+    --text: var(--color-bg-surface-02);
+    --muted: var(--color-neutral-02);
+    --line: var(--color-neutral-01);
+    --theme: var(--color-theme-01);
+    --theme-soft: var(--color-theme-04);
+    --bg: var(--color-background);
+    --y2k-display: "Megavolt", "Sofachrome", "BD Geminis", "Sneakers", "Arial Black", "Pretendard Variable", sans-serif;
+  }
 
-body {
-  transition: color 0.1s linear, background-color 0.1s linear;
-}
+  html[data-theme='light'] body {
+    --color-theme-01: #ff6737;
+    --color-theme-02: #fc8755;
+    --color-theme-03: #ffddca;
+    --color-theme-04: #f3efec;
+    --color-bg-surface: #2a2b31;
+    --color-bg-surface-02: #2a2b31;
+    --color-neutral-01: #60616a;
+    --color-neutral-02: #9597a1;
+    --color-neutral-03: #ebebeb;
+    --color-neutral-04: #fbfbfb;
+    --color-background: #ffffff;
+  }
 
-body.light,
-body[data-theme='light'] {
-  --color-theme-01: #ff6737;
-  --color-theme-02: #fc8755;
-  --color-theme-03: #ffddca;
-  --color-theme-04: #f3efec;
-  --color-bg-surface: #2a2b31;
-  --color-bg-surface-02: #2a2b31;
-  --color-neutral-01: #60616a;
-  --color-neutral-02: #9597a1;
-  --color-neutral-03: #ebebeb;
-  --color-neutral-04: #fbfbfb;
-  --color-background: #ffffff;
+  html[data-theme='dark'] body {
+    --color-theme-01: #ff8b66;
+    --color-theme-02: #957e76;
+    --color-theme-03: #c29f94;
+    --color-theme-04: #3d3937;
+    --color-bg-surface: #2a2b31;
+    --color-bg-surface-02: #ffffff;
+    --color-neutral-01: #ebdfd9;
+    --color-neutral-02: #948884;
+    --color-neutral-03: #ebebeb;
+    --color-neutral-04: #fbfbfb;
+    --color-background: #2a2b31;
+  }
 
-  --surface: var(--color-background);
-  --text: var(--color-bg-surface-02);
-  --muted: var(--color-neutral-02);
-  --line: var(--color-neutral-01);
-  --theme: var(--color-theme-01);
-  --theme-soft: var(--color-theme-04);
-  --bg: var(--color-background);
-}
+  /* Reset / base */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; transition: color 0.1s linear, background-color 0.1s linear; min-height: 100vh; display: flex; flex-direction: column; font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text); background: var(--bg); }
+  img, picture, video, canvas, svg { display: block; max-width: 100%; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  p, h1, h2, h3, h4, h5, h6 { margin: 0; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  table { border-collapse: collapse; border-spacing: 0; }
+  a { color: inherit; text-decoration: none; }
 
-body.dark,
-body[data-theme='dark'] {
-  --color-theme-01: #ff8b66;
-  --color-theme-02: #957e76;
-  --color-theme-03: #c29f94;
-  --color-theme-04: #3d3937;
-  --color-bg-surface: #2a2b31;
-  --color-bg-surface-02: #ffffff;
-  --color-neutral-01: #ebdfd9;
-  --color-neutral-02: #948884;
-  --color-neutral-03: #ebebeb;
-  --color-neutral-04: #fbfbfb;
-  --color-background: #2a2b31;
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--theme-soft); }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; border: 2px solid var(--theme-soft); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--theme); }
 
-  --surface: var(--color-bg-surface);
-  --text: var(--color-bg-surface-02);
-  --muted: var(--color-neutral-02);
-  --line: var(--color-neutral-02);
-  --theme: var(--color-theme-01);
-  --theme-soft: var(--color-theme-04);
-  --bg: var(--color-background);
-}
+  /* Default Markdown Spacing */
+  .post-content > * + * {
+    margin-top: 1rem;
+  }
 
-* {
-  box-sizing: border-box;
-}
+  .post-content h2 {
+    margin-top: 2.5rem;
+  }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  background: var(--bg);
-}
+  .post-content h3 {
+    margin-top: 1.5rem;
+  }
 
-a {
-  color: inherit;
+  /* Restore List Styles for Post Content */
+  .post-content ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+  }
+  .post-content ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+  }
+  .post-content li {
+    display: list-item;
+  }
+  .post-content li + li {
+    margin-top: 0.5rem;
+  }
+  .post-content ul ul, .post-content ul ol, .post-content ol ul, .post-content ol ol {
+    margin-top: 0.5rem;
+  }
 }
 
 .page-shell {
@@ -111,90 +123,12 @@ a {
   background-repeat: no-repeat, no-repeat;
 }
 
-body.dark .page-shell,
-body[data-theme='dark'] .page-shell {
+html[data-theme='dark'] .page-shell {
   background-image: radial-gradient(circle at 84% -5%, rgba(247, 197, 50, 0.14) 0 100px, transparent 101px), url("/images/background.svg");
   background-blend-mode: normal, multiply;
-  opacity: 1;
 }
 
-main {
-  flex: 1;
-}
-
-.neo-frame {
-  box-shadow: 3px 3px 0 var(--line);
-}
-
-.neo-gnb-link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  padding: 6px 12px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-}
-
-.neo-gnb-link:hover {
-  transform: translate(-1px, -1px);
-  background: var(--theme-soft);
-  box-shadow: 1px 1px 0 0 var(--line);
-}
-
-.neo-gnb-link.is-active {
-  background: var(--theme);
-  color: white;
-  box-shadow: 1px 1px 0 0 var(--line);
-}
-
-.neo-gnb-link-label {
-  position: relative;
-  z-index: 2;
-}
-
-.y2k-logo {
-  font-family: var(--y2k-display);
-  letter-spacing: 0.02em;
-}
-
-.y2k-hero {
-  box-shadow: 2px 2px 0 0 var(--line);
-}
-
-.y2k-title {
-  font-family: var(--y2k-display);
-  letter-spacing: 0.02em;
-  color: var(--text);
-}
-
-.hero-icon-left {
-  position: absolute;
-  left: 14px;
-  top: 10px;
-  opacity: 0.3;
-}
-
-.hero-icon-right {
-  position: absolute;
-  right: 12px;
-  top: 10px;
-  opacity: 0.35;
-}
-
-.y2k-stars {
-  position: absolute;
-  right: 62px;
-  top: 8px;
-  width: 140px;
-  height: 110px;
-  background-image: radial-gradient(circle, #fff 0 4px, transparent 4px), radial-gradient(circle, var(--theme) 0 2px, transparent 2px), radial-gradient(circle, var(--line) 0 1.5px, transparent 1.5px);
-  background-position: 6% 20%, 56% 55%, 82% 10%;
-  background-repeat: no-repeat;
-}
-
-.y2k-card-image {
-  filter: saturate(1.05) contrast(1.05);
-}
+main { flex: 1; }
+.neo-frame { box-shadow: 3px 3px 0 var(--line); }
+.y2k-logo { font-family: var(--y2k-display); letter-spacing: -0.025em; }
+.y2k-title { font-family: var(--y2k-display); letter-spacing: 0.02em; }

@@ -1,45 +1,43 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Theme } from '@/components/use-theme';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { css } from '@/styled-system/css';
 
 type Props = {
   issueTerm: string;
 };
 
-function getTheme(): Theme {
-  if (typeof document === 'undefined') {
-    return 'light';
-  }
-
-  return document.body.dataset.theme === 'dark' ? 'dark' : 'light';
-}
-
 export default function PostComments({ issueTerm }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setTheme(getTheme());
-
-    const handleThemeChange = () => {
-      setTheme(getTheme());
-    };
-
-    window.addEventListener('themechange', handleThemeChange);
-    return () => window.removeEventListener('themechange', handleThemeChange);
+    setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const container = containerRef.current;
+  const currentTheme = useMemo<'light' | 'dark'>(() => {
+    if (theme === 'dark' || theme === 'light') {
+      return theme;
+    }
 
-    if (!container) {
+    return resolvedTheme === 'dark' ? 'dark' : 'light';
+  }, [resolvedTheme, theme]);
+
+  const utterancesTheme = currentTheme === 'dark' ? 'github-dark' : 'github-light';
+
+  useEffect(() => {
+    if (!mounted || !containerRef.current) {
       return;
     }
 
-    setLoaded(false);
-    container.innerHTML = '';
+    const container = containerRef.current;
+
+    // 기존 위젯이 있다면 제거
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
 
     const script = document.createElement('script');
     script.src = 'https://utteranc.es/client.js';
@@ -47,30 +45,21 @@ export default function PostComments({ issueTerm }: Props) {
     script.crossOrigin = 'anonymous';
     script.setAttribute('repo', 'suu3/suu3.github.io');
     script.setAttribute('issue-term', issueTerm);
-    script.setAttribute('theme', theme === 'dark' ? 'github-dark' : 'github-light');
     script.setAttribute('label', 'comment');
+    script.setAttribute('theme', utterancesTheme);
 
     container.appendChild(script);
-
-    const observer = new MutationObserver(() => {
-      const iframe = container.querySelector('iframe.utterances-frame');
-      if (iframe) {
-        setLoaded(true);
-      }
-    });
-
-    observer.observe(container, { childList: true, subtree: true });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [issueTerm, theme]);
+  }, [mounted, issueTerm, utterancesTheme]);
 
   return (
-    <section className="mt-10 border-t border-[var(--line)] pt-8">
-      <h2 className="mb-4 text-xl font-black">댓글</h2>
-      {!loaded && <p className="mb-3 text-sm text-[var(--muted)]">댓글 위젯을 불러오는 중...</p>}
-      <div ref={containerRef} className="min-h-[180px]" />
+    <section className={css({ mt: '2.5rem', borderTop: '1px solid var(--line)', pt: '2rem' })}>
+      <h2 className={css({ mb: '1rem', fontSize: '1.25rem', fontWeight: '900' })}>댓글</h2>
+      {!mounted && (
+        <p className={css({ mb: '0.75rem', fontSize: '0.875rem', color: 'var(--muted)' })}>
+          댓글 위젯을 불러오는 중...
+        </p>
+      )}
+      <div ref={containerRef} className={css({ minH: '180px' })} />
     </section>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { css } from '@/styled-system/css';
 
 export default function MobileScrollControls() {
   const [show, setShow] = useState(false);
@@ -28,11 +29,11 @@ export default function MobileScrollControls() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-30 flex flex-col gap-2 md:hidden">
+    <div className={css({ position: 'fixed', bottom: '1rem', right: '1rem', zIndex: 30, display: { base: 'flex', md: 'none' }, flexDir: 'column', gap: '0.5rem' })}>
       <button
         type="button"
         onClick={scrollTop}
-        className="rounded-full border-2 border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-black shadow-[2px_2px_0_0_var(--line)]"
+        className={css({ borderRadius: '9999px', border: '2px solid var(--line)', bg: 'var(--surface)', px: '0.75rem', py: '0.5rem', fontSize: '0.75rem', fontWeight: '900', boxShadow: '2px 2px 0 0 var(--line)' })}
         aria-label="맨 위로 이동"
       >
         TOP
@@ -40,7 +41,7 @@ export default function MobileScrollControls() {
       <button
         type="button"
         onClick={scrollBottom}
-        className="rounded-full border-2 border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-black shadow-[2px_2px_0_0_var(--line)]"
+        className={css({ borderRadius: '9999px', border: '2px solid var(--line)', bg: 'var(--surface)', px: '0.75rem', py: '0.5rem', fontSize: '0.75rem', fontWeight: '900', boxShadow: '2px 2px 0 0 var(--line)' })}
         aria-label="맨 아래로 이동"
       >
         BOT
@@ -48,3 +49,4 @@ export default function MobileScrollControls() {
     </div>
   );
 }
+
