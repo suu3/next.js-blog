@@ -1,24 +1,19 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Theme } from '@/components/use-theme';
 
 type Props = {
   issueTerm: string;
 };
 
-type Theme = 'light' | 'dark';
-
-const toUtterancesTheme = (theme: Theme) => (theme === 'dark' ? 'github-dark' : 'github-light');
-
-const getCurrentTheme = (): Theme => {
-  const bodyTheme = document.body.dataset.theme;
-
-  if (bodyTheme === 'dark' || document.body.classList.contains('dark')) {
-    return 'dark';
+function getTheme(): Theme {
+  if (typeof document === 'undefined') {
+    return 'light';
   }
 
-  return 'light';
-};
+  return document.body.dataset.theme === 'dark' ? 'dark' : 'light';
+}
 
 export default function PostComments({ issueTerm }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -26,23 +21,14 @@ export default function PostComments({ issueTerm }: Props) {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    setTheme(getCurrentTheme());
+    setTheme(getTheme());
 
-    const onThemeChange = (event: Event) => {
-      const customEvent = event as CustomEvent<Theme>;
-      if (customEvent.detail === 'light' || customEvent.detail === 'dark') {
-        setTheme(customEvent.detail);
-        return;
-      }
-
-      setTheme(getCurrentTheme());
+    const handleThemeChange = () => {
+      setTheme(getTheme());
     };
 
-    window.addEventListener('themechange', onThemeChange);
-
-    return () => {
-      window.removeEventListener('themechange', onThemeChange);
-    };
+    window.addEventListener('themechange', handleThemeChange);
+    return () => window.removeEventListener('themechange', handleThemeChange);
   }, []);
 
   useEffect(() => {
@@ -61,7 +47,7 @@ export default function PostComments({ issueTerm }: Props) {
     script.crossOrigin = 'anonymous';
     script.setAttribute('repo', 'suu3/suu3.github.io');
     script.setAttribute('issue-term', issueTerm);
-    script.setAttribute('theme', toUtterancesTheme(theme));
+    script.setAttribute('theme', theme === 'dark' ? 'github-dark' : 'github-light');
     script.setAttribute('label', 'comment');
 
     container.appendChild(script);
@@ -78,27 +64,7 @@ export default function PostComments({ issueTerm }: Props) {
     return () => {
       observer.disconnect();
     };
-  }, [issueTerm]);
-
-  useEffect(() => {
-    if (!loaded) {
-      return;
-    }
-
-    const iframe = containerRef.current?.querySelector('iframe.utterances-frame') as HTMLIFrameElement | null;
-
-    if (!iframe?.contentWindow) {
-      return;
-    }
-
-    iframe.contentWindow.postMessage(
-      {
-        type: 'set-theme',
-        theme: toUtterancesTheme(theme),
-      },
-      'https://utteranc.es',
-    );
-  }, [loaded, theme]);
+  }, [issueTerm, theme]);
 
   return (
     <section className="mt-10 border-t border-[var(--line)] pt-8">

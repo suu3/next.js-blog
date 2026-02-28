@@ -157,3 +157,17 @@ export function getCategoriesWithCount(posts: PostSummary[]) {
     return acc;
   }, {});
 }
+
+
+export function getTagsWithCount(posts: PostSummary[]) {
+  return posts.reduce<Record<string, number>>((acc, post) => {
+    post.tags.forEach((tag) => {
+      acc[tag] = (acc[tag] ?? 0) + 1;
+    });
+    return acc;
+  }, {});
+}
+
+export function getPostsByTag(tag: string): PostSummary[] {
+  return getAllPosts().filter((post) => post.tags.includes(tag));
+}
