@@ -5,13 +5,102 @@ type Props = {
   content: string;
 };
 
+type ListItem = {
+  text: string;
+  children: string[];
+};
+
 type Block =
   | { type: 'h2' | 'h3'; text: string }
   | { type: 'p'; text: string }
-  | { type: 'ul'; items: string[] }
-  | { type: 'ol'; items: string[] }
+  | { type: 'ul'; items: ListItem[] }
+  | { type: 'ol'; items: ListItem[] }
   | { type: 'blockquote'; text: string }
   | { type: 'code'; text: string };
+
+function getLeadingSpaces(value: string): number {
+  return value.length - value.trimStart().length;
+}
+
+function parseUnorderedList(lines: string[], start: number) {
+  const items: ListItem[] = [];
+  let i = start;
+
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const normalizedLine = rawLine.trimStart();
+
+    if (!/^[-*]\s+/.test(normalizedLine)) {
+      break;
+    }
+
+    items.push({
+      text: normalizedLine.replace(/^[-*]\s+/, '').trim(),
+      children: [],
+    });
+    i += 1;
+  }
+
+  return { items, nextIndex: i };
+}
+
+function parseOrderedList(lines: string[], start: number) {
+  const items: ListItem[] = [];
+  let i = start;
+
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const normalizedLine = rawLine.trimStart();
+
+    const orderedMatch = normalizedLine.match(/^\d+\.\s+(.*)$/);
+
+    if (!orderedMatch) {
+      break;
+    }
+
+    const item: ListItem = {
+      text: orderedMatch[1].trim(),
+      children: [],
+    };
+
+    i += 1;
+
+    while (i < lines.length) {
+      const nestedRawLine = lines[i];
+      const nestedNormalizedLine = nestedRawLine.trimStart();
+      const nestedLeadingSpaces = getLeadingSpaces(nestedRawLine);
+
+      if (!nestedNormalizedLine) {
+        i += 1;
+        continue;
+      }
+
+      if (nestedLeadingSpaces >= 2 && /^[-*]\s+/.test(nestedNormalizedLine)) {
+        item.children.push(nestedNormalizedLine.replace(/^[-*]\s+/, '').trim());
+        i += 1;
+        continue;
+      }
+
+      if (nestedLeadingSpaces >= 2 && item.children.length > 0) {
+        item.children[item.children.length - 1] = `${item.children[item.children.length - 1]} ${nestedNormalizedLine}`.trim();
+        i += 1;
+        continue;
+      }
+
+      if (nestedLeadingSpaces >= 2) {
+        item.text = `${item.text} ${nestedNormalizedLine}`.trim();
+        i += 1;
+        continue;
+      }
+
+      break;
+    }
+
+    items.push(item);
+  }
+
+  return { items, nextIndex: i };
+}
 
 function parseBlocks(content: string): Block[] {
   const lines = content.split('\n');
@@ -54,22 +143,16 @@ function parseBlocks(content: string): Block[] {
     }
 
     if (/^[-*]\s+/.test(normalizedLine)) {
-      const items: string[] = [];
-      while (i < lines.length && /^[-*]\s+/.test(lines[i].trimStart())) {
-        items.push(lines[i].trimStart().replace(/^[-*]\s+/, '').trim());
-        i += 1;
-      }
-      blocks.push({ type: 'ul', items });
+      const result = parseUnorderedList(lines, i);
+      blocks.push({ type: 'ul', items: result.items });
+      i = result.nextIndex;
       continue;
     }
 
     if (/^\d+\.\s+/.test(normalizedLine)) {
-      const items: string[] = [];
-      while (i < lines.length && /^\d+\.\s+/.test(lines[i].trimStart())) {
-        items.push(lines[i].trimStart().replace(/^\d+\.\s+/, '').trim());
-        i += 1;
-      }
-      blocks.push({ type: 'ol', items });
+      const result = parseOrderedList(lines, i);
+      blocks.push({ type: 'ol', items: result.items });
+      i = result.nextIndex;
       continue;
     }
 
@@ -179,19 +262,33 @@ export default function PostMarkdown({ content }: Props) {
           case 'ul':
             return (
               <ul key={`${block.type}-${index}`} className="mt-4 list-disc space-y-2 pl-6 text-[#374151]">
-                {block.items.map((item) => (
-                  <li key={item} className="leading-7">
-                    {renderInline(item)}
+                {block.items.map((item, itemIndex) => (
+                  <li key={`${item.text}-${itemIndex}`} className="leading-7">
+                    {renderInline(item.text)}
+                    {item.children.length > 0 && (
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[#4b5563]">
+                        {item.children.map((child, childIndex) => (
+                          <li key={`${child}-${childIndex}`}>{renderInline(child)}</li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ul>
             );
           case 'ol':
             return (
-              <ol key={`${block.type}-${index}`} className="mt-4 list-decimal space-y-2 pl-6 text-[#374151]">
-                {block.items.map((item) => (
-                  <li key={item} className="leading-7">
-                    {renderInline(item)}
+              <ol key={`${block.type}-${index}`} className="mt-4 list-decimal space-y-3 pl-6 text-[#374151]">
+                {block.items.map((item, itemIndex) => (
+                  <li key={`${item.text}-${itemIndex}`} className="leading-7">
+                    {renderInline(item.text)}
+                    {item.children.length > 0 && (
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[#4b5563]">
+                        {item.children.map((child, childIndex) => (
+                          <li key={`${child}-${childIndex}`}>{renderInline(child)}</li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ol>

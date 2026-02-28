@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   issueTerm: string;
@@ -8,6 +8,7 @@ type Props = {
 
 export default function PostComments({ issueTerm }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -16,6 +17,7 @@ export default function PostComments({ issueTerm }: Props) {
       return;
     }
 
+    setLoaded(false);
     container.innerHTML = '';
 
     const script = document.createElement('script');
@@ -28,12 +30,26 @@ export default function PostComments({ issueTerm }: Props) {
     script.setAttribute('label', 'comment');
 
     container.appendChild(script);
+
+    const observer = new MutationObserver(() => {
+      const iframe = container.querySelector('iframe.utterances-frame');
+      if (iframe) {
+        setLoaded(true);
+      }
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+    };
   }, [issueTerm]);
 
   return (
     <section className="mt-10 border-t border-[#2a2b31] pt-8">
       <h2 className="mb-4 text-xl font-black">댓글</h2>
-      <div ref={containerRef} />
+      {!loaded && <p className="mb-3 text-sm text-[#6b7280]">댓글 위젯을 불러오는 중...</p>}
+      <div ref={containerRef} className="min-h-[180px]" />
     </section>
   );
 }
