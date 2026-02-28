@@ -66,37 +66,39 @@ export default function PostSearch({ posts }: Props) {
   };
 
   return (
-    <section className="rounded-2xl border border-[#2a2b31] bg-[#f6f3ef]">
-      <div className="border-b border-[#2a2b31] px-4 py-3 md:px-6">
+    <section className="neo-frame rounded-[22px] border-2 border-[#2a2b31] bg-[#f7f5f2] p-3 md:p-4">
+      <div className="rounded-2xl border-2 border-[#2a2b31] bg-white px-4 py-3">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-lg font-black tracking-tight">Search UI</h2>
-          <input
-            id="post-search"
-            type="search"
-            placeholder="검색제목, 설명, 태그로 검색"
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            className="w-full rounded-md border border-[#2a2b31] bg-white px-3 py-2 text-sm outline-none md:max-w-md"
-          />
+          <h2 className="text-lg font-black tracking-tight">Latest</h2>
+          <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
+            <input
+              id="post-search"
+              type="search"
+              placeholder="Search anything"
+              value={query}
+              onChange={(event) => onQueryChange(event.target.value)}
+              className="w-full rounded-full border-2 border-[#2a2b31] bg-[#f7f5f2] px-4 py-2 text-sm outline-none md:w-84"
+            />
+            <p className="text-sm font-semibold text-gray-600">총 {filtered.length}개의 포스트</p>
+          </div>
         </div>
-        <p className="mt-2 text-sm text-gray-600">총 {filtered.length}개의 포스트</p>
       </div>
 
-      <div className="grid gap-5 p-4 md:grid-cols-[220px_minmax(0,1fr)] md:p-6">
+      <div className="mt-4 grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="space-y-3">
-          <div className="rounded-xl border border-[#2a2b31] bg-white p-3">
+          <div className="rounded-2xl border-2 border-[#2a2b31] bg-white p-3">
             <div className="flex items-center gap-2">
-              <Image src="/images/icon.png" alt="profile icon" width={24} height={24} className="h-6 w-6" />
+              <Image src="/images/icon.png" alt="profile icon" width={28} height={28} className="h-7 w-7" />
               <div>
                 <p className="text-xs text-gray-500">@Suu3</p>
-                <p className="text-sm font-semibold text-[#ff6737]">Developer</p>
+                <p className="text-sm font-bold text-[#ff6737]">Developer</p>
               </div>
             </div>
-            <p className="mt-3 text-xs text-gray-500">I explain with words and code.</p>
+            <p className="mt-3 text-xs text-gray-500">Your doing great, keep practicing.</p>
           </div>
 
-          <div className="rounded-xl border border-[#2a2b31] bg-white p-3">
-            <p className="mb-2 text-sm font-semibold">Category</p>
+          <div className="rounded-2xl border-2 border-[#2a2b31] bg-white p-3">
+            <p className="mb-2 text-sm font-black">Category</p>
             <ul className="space-y-1 text-sm">
               {categoryCounts.map((category) => {
                 const isActive = selectedCategory === category.name;
@@ -105,8 +107,10 @@ export default function PostSearch({ posts }: Props) {
                     <button
                       type="button"
                       onClick={() => selectCategory(category.name)}
-                      className={`flex w-full items-center justify-between rounded px-2 py-1 text-left ${
-                        isActive ? 'bg-[#ffddca] font-semibold' : 'hover:bg-[#f6f3ef]'
+                      className={`flex w-full items-center justify-between rounded-lg border px-2 py-1 text-left ${
+                        isActive
+                          ? 'border-[#2a2b31] bg-[#ffddca] font-semibold'
+                          : 'border-transparent hover:border-[#2a2b31] hover:bg-[#f7f5f2]'
                       }`}
                     >
                       <span>{category.name}</span>
@@ -119,16 +123,15 @@ export default function PostSearch({ posts }: Props) {
           </div>
         </aside>
 
-        <div className="space-y-6">
-          <h2 className="text-lg font-black tracking-tight">Posts UI</h2>
-          <ul className="grid gap-4 lg:grid-cols-3 sm:grid-cols-2">
+        <div className="space-y-4">
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {pagedPosts.map((post) => (
               <li key={post.slug}>
                 <Link
                   href={`/posts/${splitSlugToSegments(post.slug).join('/')}`}
-                  className="block h-full rounded-xl border border-[#2a2b31] bg-white p-2 transition duration-200 hover:-translate-y-1 hover:bg-[#fffaf4] hover:shadow-[5px_5px_0_0_#2a2b31]"
+                  className="group block h-full rounded-2xl border-2 border-[#2a2b31] bg-white p-2 transition hover:-translate-y-0.5"
                 >
-                  <div className="relative overflow-hidden rounded-lg border border-[#2a2b31]">
+                  <div className="relative overflow-hidden rounded-xl border-2 border-[#2a2b31]">
                     <Image
                       src={post.thumbnail || '/images/dummy.jpg'}
                       alt={post.title}
@@ -136,20 +139,20 @@ export default function PostSearch({ posts }: Props) {
                       height={180}
                       className="y2k-card-image h-32 w-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-black/35" />
 
                     {post.tags[0] ? (
-                      <p className="absolute left-2 top-2 z-10 inline-block rounded-md border border-[#2a2b31] bg-[#ffefe5] px-2 py-0.5 font-mono text-[10px] text-[#2a2b31]">
+                      <p className="absolute left-2 top-2 z-10 rounded border border-[#2a2b31] bg-[#ffefe5] px-2 py-0.5 font-mono text-[10px] text-[#2a2b31]">
                         #{post.tags[0]}
                       </p>
                     ) : null}
 
-                    <p className="absolute inset-0 z-10 flex items-center justify-center text-center text-xs font-black tracking-wide text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)]">
+                    <p className="absolute inset-0 z-10 flex items-center justify-center text-center text-xs font-black tracking-wide text-white">
                       {post.category}
                     </p>
                   </div>
 
-                  <h3 className="mt-2 line-clamp-2 text-sm font-bold leading-5">{post.title}</h3>
+                  <h3 className="mt-2 line-clamp-2 text-sm font-black leading-5">{post.title}</h3>
                   <p className="mt-1 line-clamp-2 text-xs text-gray-600">{post.description}</p>
                   <p className="mt-3 text-right font-mono text-[10px] text-gray-500">{post.date}</p>
                 </Link>
@@ -157,12 +160,12 @@ export default function PostSearch({ posts }: Props) {
             ))}
           </ul>
 
-          <div className="flex items-center justify-center gap-2 border-t border-[#2a2b31] pt-4">
+          <div className="flex items-center justify-center gap-2 border-t-2 border-[#2a2b31] pt-4">
             <button
               type="button"
               disabled={currentPage <= 1}
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              className="h-7 w-7 rounded border border-[#2a2b31] text-sm disabled:opacity-40"
+              className="h-7 w-7 rounded border border-[#2a2b31] bg-white text-sm disabled:opacity-40"
               aria-label="previous"
             >
               {'<'}
@@ -183,7 +186,7 @@ export default function PostSearch({ posts }: Props) {
               type="button"
               disabled={currentPage >= totalPages}
               onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-              className="h-7 w-7 rounded border border-[#2a2b31] text-sm disabled:opacity-40"
+              className="h-7 w-7 rounded border border-[#2a2b31] bg-white text-sm disabled:opacity-40"
               aria-label="next"
             >
               {'>'}
