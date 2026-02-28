@@ -14,7 +14,7 @@ export default function HomePage() {
         <div className="relative z-10 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">Suu3 Archive</p>
           <h1 className="y2k-title text-3xl font-black tracking-tight md:text-4xl">기록하고 공유합니다</h1>
-          <p className="text-sm text-gray-600">Y2K + Neo Brutalism 무드로 정리한 개발 기록</p>
+          <p className="text-sm text-gray-600">Neo Brutalism 무드로 정리한 개발 기록</p>
         </div>
       </div>
       <PostSearch posts={posts} />

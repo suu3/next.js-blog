@@ -10,6 +10,148 @@ type Props = {
   params: Promise<{ slug: string[] }>;
 };
 
+type Heading = {
+  id: string;
+  text: string;
+  level: 2 | 3;
+};
+
+type Block =
+  | { type: 'heading'; level: 2 | 3; text: string; id: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'list'; ordered: boolean; items: string[] }
+  | { type: 'code'; code: string };
+
+function toHeadingId(text: string) {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[~`!@#$%^&*()+={}[\]|\\:;"'<>,.?/]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function createUniqueHeadingId(text: string, idCountMap: Map<string, number>) {
+  const normalized = toHeadingId(text) || 'section';
+  const count = (idCountMap.get(normalized) ?? 0) + 1;
+  idCountMap.set(normalized, count);
+
+  if (count === 1) {
+    return normalized;
+  }
+
+  return `${normalized}-${count}`;
+}
+
+function formatInlineMarkdown(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+}
+
+function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] } {
+  const lines = content.replace(/\r\n/g, '\n').split('\n');
+  const blocks: Block[] = [];
+  const headings: Heading[] = [];
+  const idCountMap = new Map<string, number>();
+
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].trimEnd();
+
+    if (!line.trim()) {
+      i += 1;
+      continue;
+    }
+
+    if (line.startsWith('```')) {
+      const codeLines: string[] = [];
+      i += 1;
+      while (i < lines.length && !lines[i].startsWith('```')) {
+        codeLines.push(lines[i]);
+        i += 1;
+      }
+      blocks.push({ type: 'code', code: codeLines.join('\n') });
+      i += 1;
+      continue;
+    }
+
+    if (line.startsWith('# ')) {
+      const text = line.replace(/^#\s+/, '').trim();
+      const id = createUniqueHeadingId(text, idCountMap);
+      headings.push({ id, text, level: 2 });
+      blocks.push({ type: 'heading', level: 2, text, id });
+      i += 1;
+      continue;
+    }
+
+    if (line.startsWith('## ')) {
+      const text = line.replace(/^##\s+/, '').trim();
+      const id = createUniqueHeadingId(text, idCountMap);
+      headings.push({ id, text, level: 2 });
+      blocks.push({ type: 'heading', level: 2, text, id });
+      i += 1;
+      continue;
+    }
+
+    if (line.startsWith('### ')) {
+      const text = line.replace(/^###\s+/, '').trim();
+      const id = createUniqueHeadingId(text, idCountMap);
+      headings.push({ id, text, level: 3 });
+      blocks.push({ type: 'heading', level: 3, text, id });
+      i += 1;
+      continue;
+    }
+
+    if (line.startsWith('- ') || /^\d+\.\s+/.test(line.trimStart())) {
+      const ordered = /^\d+\.\s+/.test(line.trimStart());
+      const items: string[] = [];
+
+      while (
+        i < lines.length &&
+        lines[i].trim() &&
+        (lines[i].trimStart().startsWith('- ') || /^\d+\.\s+/.test(lines[i].trimStart()))
+      ) {
+        const currentLine = lines[i].trimStart();
+        items.push(ordered ? currentLine.replace(/^\d+\.\s+/, '') : currentLine.replace(/^-\s+/, ''));
+        i += 1;
+      }
+
+      blocks.push({ type: 'list', ordered, items });
+      continue;
+    }
+
+    const paragraphLines: string[] = [];
+    while (
+      i < lines.length &&
+      lines[i].trim() &&
+      !lines[i].startsWith('# ') &&
+      !lines[i].startsWith('## ') &&
+      !lines[i].startsWith('### ') &&
+      !lines[i].startsWith('```') &&
+      !lines[i].trimStart().startsWith('- ') &&
+      !/^\d+\.\s+/.test(lines[i].trimStart())
+    ) {
+      paragraphLines.push(lines[i].trim());
+      i += 1;
+    }
+
+    if (!paragraphLines.length) {
+      i += 1;
+      continue;
+    }
+
+    blocks.push({ type: 'paragraph', text: paragraphLines.join(' ') });
+  }
+
+  return { blocks, headings };
+}
+
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({
     slug: post.slug.split('/').map(encodeURIComponent),
