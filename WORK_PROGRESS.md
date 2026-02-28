@@ -1,26 +1,38 @@
-# 작업 진행상황 (Tailwind → PandaCSS 전환 시도)
+# 작업 진행상황 (사용자 액션 가이드: PandaCSS 전환)
 
 ## 진행상황
-- 요청사항: Tailwind에서 PandaCSS로 전환 가능 여부 확인.
-- 실제 전환 작업을 진행하기 위해 `@pandacss/dev` 설치를 시도했습니다.
-  - `pnpm add -D @pandacss/dev`
-  - `npm i -D @pandacss/dev`
-- 결과: 현재 환경의 패키지 보안 정책/레지스트리 제한으로 `403 Forbidden`이 발생하여 PandaCSS 패키지 설치가 차단되었습니다.
-- 따라서 이번 턴에서는 코드 전환을 강제로 진행하지 않고, 환경 제약을 명확히 확인/기록했습니다.
+- 요청사항("내가 어캐해야하지?")에 맞춰, 현재 막힌 원인과 사용자 액션 플랜을 실행 순서대로 정리했습니다.
+- 현재 막힌 원인 요약
+  - `@pandacss/dev` 설치가 레지스트리 정책으로 `403 Forbidden` 차단됨
+  - 따라서 PandaCSS 코드 생성(`styled-system`)을 시작할 수 없는 상태
 
 ## Next Action Item
-- 레지스트리 정책에서 `@pandacss/*` 패키지 설치 허용 후 재시도
-- 허용 즉시 아래 순서로 전환 진행
-  1. `panda.config.ts` 생성
-  2. `styled-system` 코드 생성
-  3. `app/layout.tsx`, `app/page.tsx`, `components/gnb.tsx`, `components/post-search.tsx` 순으로 className 스타일을 PandaCSS `css()`/recipe로 치환
-  4. `@import "tailwindcss"` 제거 및 Tailwind 의존성 정리
+- 사용자 측에서 패키지 설치 권한(또는 레지스트리 설정)을 먼저 해결
+- 해결 직후 제가 즉시 진행할 작업
+  1. `@pandacss/dev` 설치
+  2. `panda.config.ts` 생성 + codegen
+  3. `app/layout.tsx`, `app/page.tsx`, `components/gnb.tsx`, `components/post-search.tsx` 순으로 변환
+  4. Tailwind 제거 및 빌드 검증
 
 ## 주의사항
-- 현재 상태에서 Tailwind를 먼저 제거하면 스타일이 즉시 깨질 수 있으므로, PandaCSS 설치/코드생성 선행이 필요합니다.
-- 환경 제약이 해소되기 전에는 “완전 전환” 커밋을 만드는 것이 오히려 리스크가 큽니다.
+- 지금 Tailwind를 먼저 지우면 스타일이 전부 깨집니다.
+- 반드시 "Panda 설치 성공 → codegen 성공" 이후에 점진 변환해야 안전합니다.
+- 현재 `.npmrc`에는 `auto-install-peers=true`만 있고, 별도 npm registry 인증 정보는 없습니다.
 
 ## 사용자가 해야할 일
-- 사내/프로젝트 패키지 정책에서 `@pandacss/dev` 설치를 허용해주세요.
-- 가능하면 허용된 사설 레지스트리 경로(또는 미러)를 알려주세요.
-- 허용 후 다시 요청 주시면 바로 PandaCSS 전환 커밋으로 이어서 진행하겠습니다.
+아래 3가지만 해주시면 됩니다.
+
+1. **레지스트리 정책 열기**
+   - `@pandacss/dev` 설치 허용(사내 프록시/보안 정책 예외 추가)
+
+2. **(필요 시) npm 토큰/registry 설정**
+   - 사내 환경이라면 프로젝트 루트 `.npmrc`에 허용된 registry와 토큰 설정
+
+3. **설치 확인 명령 실행**
+   - `pnpm add -D @pandacss/dev`
+   - 위 명령이 성공하면 바로 알려주세요. 그다음 턴에서 제가 전환 커밋까지 이어서 진행합니다.
+
+## 제가 이어서 바로 할 일(사용자 확인 후)
+- PandaCSS 초기 설정부터 Tailwind 제거까지 한 번에 진행
+- `pnpm build` 통과 확인
+- 변경 화면 스크린샷 첨부
