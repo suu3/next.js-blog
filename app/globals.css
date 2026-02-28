@@ -46,7 +46,7 @@ main {
 }
 
 .neo-frame {
-  box-shadow: 7px 7px 0 #2a2b31;
+  box-shadow: 4px 4px 0 #2a2b31;
 }
 
 .neo-gnb-link {
@@ -64,13 +64,13 @@ main {
 .neo-gnb-link:hover {
   transform: translate(-1px, -1px);
   background: var(--theme-soft);
-  box-shadow: 2px 2px 0 0 var(--line);
+  box-shadow: 1px 1px 0 0 var(--line);
 }
 
 .neo-gnb-link.is-active {
   background: var(--theme);
   color: white;
-  box-shadow: 2px 2px 0 0 var(--line);
+  box-shadow: 1px 1px 0 0 var(--line);
 }
 
 .neo-gnb-link-label {
@@ -84,7 +84,7 @@ main {
 }
 
 .y2k-hero {
-  box-shadow: 6px 6px 0 0 #2a2b31;
+  box-shadow: 3px 3px 0 0 #2a2b31;
 }
 
 .y2k-title {

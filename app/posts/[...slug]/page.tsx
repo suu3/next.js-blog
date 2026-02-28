@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import PostToc from '@/components/post-toc';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
 
 type Props = {
@@ -15,7 +16,7 @@ type Heading = {
 type Block =
   | { type: 'heading'; level: 2 | 3; text: string; id: string }
   | { type: 'paragraph'; text: string }
-  | { type: 'list'; items: string[] }
+  | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'code'; code: string };
 
 function toHeadingId(text: string) {
@@ -26,6 +27,16 @@ function toHeadingId(text: string) {
       .replace(/\s+/g, '-')
       .replace(/[.,!?()[\]{}'"`~:@#$%^&*+=<>/\\|]/g, ''),
   );
+}
+
+function formatInlineMarkdown(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
 }
 
 function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] } {
@@ -54,6 +65,15 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
       continue;
     }
 
+    if (line.startsWith('# ')) {
+      const text = line.replace(/^#\s+/, '').trim();
+      const id = toHeadingId(text);
+      headings.push({ id, text, level: 2 });
+      blocks.push({ type: 'heading', level: 2, text, id });
+      i += 1;
+      continue;
+    }
+
     if (line.startsWith('## ')) {
       const text = line.replace(/^##\s+/, '').trim();
       const id = toHeadingId(text);
@@ -72,13 +92,21 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
       continue;
     }
 
-    if (line.startsWith('- ')) {
+    if (line.startsWith('- ') || /^\d+\.\s+/.test(line.trimStart())) {
+      const ordered = /^\d+\.\s+/.test(line.trimStart());
       const items: string[] = [];
-      while (i < lines.length && lines[i].trimStart().startsWith('- ')) {
-        items.push(lines[i].trimStart().replace(/^-\s+/, ''));
+
+      while (
+        i < lines.length &&
+        lines[i].trim() &&
+        (lines[i].trimStart().startsWith('- ') || /^\d+\.\s+/.test(lines[i].trimStart()))
+      ) {
+        const currentLine = lines[i].trimStart();
+        items.push(ordered ? currentLine.replace(/^\d+\.\s+/, '') : currentLine.replace(/^-\s+/, ''));
         i += 1;
       }
-      blocks.push({ type: 'list', items });
+
+      blocks.push({ type: 'list', ordered, items });
       continue;
     }
 
@@ -86,13 +114,20 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
     while (
       i < lines.length &&
       lines[i].trim() &&
+      !lines[i].startsWith('# ') &&
       !lines[i].startsWith('## ') &&
       !lines[i].startsWith('### ') &&
       !lines[i].startsWith('```') &&
-      !lines[i].trimStart().startsWith('- ')
+      !lines[i].trimStart().startsWith('- ') &&
+      !/^\d+\.\s+/.test(lines[i].trimStart())
     ) {
       paragraphLines.push(lines[i].trim());
       i += 1;
+    }
+
+    if (!paragraphLines.length) {
+      i += 1;
+      continue;
     }
 
     blocks.push({ type: 'paragraph', text: paragraphLines.join(' ') });
@@ -119,8 +154,8 @@ export default async function PostDetailPage({ params }: Props) {
   const { blocks, headings } = parseMarkdown(post.content);
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
-      <article className="rounded-xl border border-[#2a2b31] bg-white p-6 shadow-[4px_4px_0_0_#2a2b31]">
+    <section className="grid gap-6 md:grid-cols-[minmax(0,1fr)_220px]">
+      <article className="rounded-xl border border-[#2a2b31] bg-white p-6 shadow-[2px_2px_0_0_#2a2b31]">
         <p className="mb-2 inline-block rounded-md bg-[#ffddca] px-2 py-1 font-mono text-xs">{post.category}</p>
         <h1 className="text-3xl font-black tracking-tight">{post.title}</h1>
         <p className="mt-2 text-sm text-gray-500">{post.date}</p>
@@ -128,7 +163,7 @@ export default async function PostDetailPage({ params }: Props) {
         <p className="mt-3 text-sm text-gray-600">태그: {post.tags.join(', ') || '없음'}</p>
         <hr className="my-6 border-[#2a2b31]" />
 
-        <div className="space-y-4">
+        <div className="space-y-4 prose prose-neutral max-w-none prose-a:text-[#ff6737]">
           {blocks.map((block, index) => {
             if (block.type === 'heading') {
               if (block.level === 2) {
@@ -147,10 +182,20 @@ export default async function PostDetailPage({ params }: Props) {
             }
 
             if (block.type === 'list') {
+              if (block.ordered) {
+                return (
+                  <ol key={`olist-${index}`} className="list-decimal space-y-1 pl-5 text-gray-800">
+                    {block.items.map((item, itemIndex) => (
+                      <li key={`${item}-${itemIndex}`} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
+                    ))}
+                  </ol>
+                );
+              }
+
               return (
-                <ul key={`list-${index}`} className="list-disc space-y-1 pl-5 text-gray-800">
+                <ul key={`ulist-${index}`} className="list-disc space-y-1 pl-5 text-gray-800">
                   {block.items.map((item, itemIndex) => (
-                    <li key={`${item}-${itemIndex}`}>{item}</li>
+                    <li key={`${item}-${itemIndex}`} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
                   ))}
                 </ul>
               );
@@ -168,9 +213,7 @@ export default async function PostDetailPage({ params }: Props) {
             }
 
             return (
-              <p key={`p-${index}`} className="leading-8 text-gray-800">
-                {block.text}
-              </p>
+              <p key={`p-${index}`} className="leading-8 text-gray-800" dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(block.text) }} />
             );
           })}
         </div>
@@ -180,22 +223,10 @@ export default async function PostDetailPage({ params }: Props) {
         </Link>
       </article>
 
-      <aside className="hidden lg:block">
-        <div className="sticky top-24 rounded-xl border border-[#2a2b31] bg-white p-4 shadow-[4px_4px_0_0_#2a2b31]">
-          <p className="mb-3 text-sm font-black">글 제목</p>
-          {headings.length === 0 ? (
-            <p className="text-xs text-gray-500">표시할 목차가 없습니다.</p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {headings.map((heading) => (
-                <li key={heading.id} className={heading.level === 3 ? 'pl-3' : ''}>
-                  <a href={`#${heading.id}`} className="text-gray-700 hover:text-[#ff6737] hover:underline">
-                    {heading.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
+      <aside className="hidden md:block">
+        <div className="sticky top-24 rounded-xl border border-[#2a2b31] bg-white p-4 shadow-[2px_2px_0_0_#2a2b31]">
+          <p className="mb-3 text-sm font-black">Index</p>
+          <PostToc headings={headings} />
         </div>
       </aside>
     </section>
