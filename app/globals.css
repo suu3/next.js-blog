@@ -1,15 +1,85 @@
+@import url("https://use.typekit.net/njr2div.css");
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 @import "tailwindcss";
 
+@font-face {
+  font-family: "FiraCode-Medium";
+  src: url("/fonts/FiraCode-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
 :root {
-  --surface: #ffffff;
-  --text: #2a2b31;
-  --muted: #6b7280;
-  --line: #2a2b31;
-  --theme: #ff6737;
-  --theme-soft: #ffddca;
-  --bg: #f4f1ec;
+  --color-theme-01: #ff6737;
+  --color-theme-02: #fc8755;
+  --color-theme-03: #ffddca;
+  --color-theme-04: #f3efec;
+  --color-bg-surface: #2a2b31;
+  --color-bg-surface-02: #2a2b31;
+  --color-neutral-01: #60616a;
+  --color-neutral-02: #9597a1;
+  --color-neutral-03: #ebebeb;
+  --color-neutral-04: #fbfbfb;
+  --color-background: #ffffff;
+
+  --surface: var(--color-background);
+  --text: var(--color-bg-surface-02);
+  --muted: var(--color-neutral-02);
+  --line: var(--color-neutral-01);
+  --theme: var(--color-theme-01);
+  --theme-soft: var(--color-theme-04);
+  --bg: var(--color-background);
   --y2k-display: "Megavolt", "Sofachrome", "BD Geminis", "Sneakers", "Arial Black", "Pretendard Variable", sans-serif;
+}
+
+body {
+  transition: color 0.1s linear, background-color 0.1s linear;
+}
+
+body.light,
+body[data-theme='light'] {
+  --color-theme-01: #ff6737;
+  --color-theme-02: #fc8755;
+  --color-theme-03: #ffddca;
+  --color-theme-04: #f3efec;
+  --color-bg-surface: #2a2b31;
+  --color-bg-surface-02: #2a2b31;
+  --color-neutral-01: #60616a;
+  --color-neutral-02: #9597a1;
+  --color-neutral-03: #ebebeb;
+  --color-neutral-04: #fbfbfb;
+  --color-background: #ffffff;
+
+  --surface: var(--color-background);
+  --text: var(--color-bg-surface-02);
+  --muted: var(--color-neutral-02);
+  --line: var(--color-neutral-01);
+  --theme: var(--color-theme-01);
+  --theme-soft: var(--color-theme-04);
+  --bg: var(--color-background);
+}
+
+body.dark,
+body[data-theme='dark'] {
+  --color-theme-01: #ff8b66;
+  --color-theme-02: #957e76;
+  --color-theme-03: #c29f94;
+  --color-theme-04: #3d3937;
+  --color-bg-surface: #2a2b31;
+  --color-bg-surface-02: #ffffff;
+  --color-neutral-01: #ebdfd9;
+  --color-neutral-02: #948884;
+  --color-neutral-03: #ebebeb;
+  --color-neutral-04: #fbfbfb;
+  --color-background: #2a2b31;
+
+  --surface: var(--color-bg-surface);
+  --text: var(--color-bg-surface-02);
+  --muted: var(--color-neutral-02);
+  --line: var(--color-neutral-02);
+  --theme: var(--color-theme-01);
+  --theme-soft: var(--color-theme-04);
+  --bg: var(--color-background);
 }
 
 * {
@@ -41,6 +111,13 @@ a {
   background-repeat: no-repeat, no-repeat;
 }
 
+body.dark .page-shell,
+body[data-theme='dark'] .page-shell {
+  background-image: radial-gradient(circle at 84% -5%, rgba(247, 197, 50, 0.14) 0 100px, transparent 101px), url("/images/background.svg");
+  background-blend-mode: normal, multiply;
+  opacity: 1;
+}
+
 main {
   flex: 1;
 }
@@ -56,7 +133,7 @@ main {
   justify-content: center;
   border: 2px solid var(--line);
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
   padding: 6px 12px;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
