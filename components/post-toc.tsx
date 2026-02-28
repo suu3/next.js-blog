@@ -2,91 +2,102 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-type Heading = {
+type TocItem = {
   id: string;
   text: string;
   level: 2 | 3;
 };
 
 type Props = {
-  headings: Heading[];
+  items: TocItem[];
 };
 
-const HEADER_OFFSET = 96;
+export default function PostToc({ items }: Props) {
+  const [activeId, setActiveId] = useState<string>(items[0]?.id ?? '');
 
-export default function PostToc({ headings }: Props) {
-  const ids = useMemo(() => headings.map((heading) => heading.id), [headings]);
-  const [activeId, setActiveId] = useState<string>('');
+  const itemIds = useMemo(() => items.map((item) => item.id), [items]);
 
   useEffect(() => {
-    if (!ids.length) {
+    setActiveId(items[0]?.id ?? '');
+  }, [items]);
+
+  useEffect(() => {
+    if (!itemIds.length) {
       return;
     }
 
-    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
-    if (hash && ids.includes(hash)) {
-      setActiveId(hash);
-    } else {
-      setActiveId(ids[0]);
+    const headingElements = itemIds
+      .map((id) => document.getElementById(id))
+      .filter((element): element is HTMLElement => Boolean(element));
+
+    if (!headingElements.length) {
+      return;
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
+        const visibleEntries = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-        if (visible.length) {
-          setActiveId(visible[0].target.id);
+        if (visibleEntries[0]?.target.id) {
+          setActiveId(visibleEntries[0].target.id);
+          return;
         }
+
+        const nextHeading = headingElements.find((heading) => heading.getBoundingClientRect().top > 120);
+
+        if (nextHeading) {
+          setActiveId(nextHeading.id);
+          return;
+        }
+
+        setActiveId(headingElements[headingElements.length - 1].id);
       },
       {
-        rootMargin: `-${HEADER_OFFSET}px 0px -65% 0px`,
-        threshold: [0, 0.25, 1],
+        rootMargin: '-20% 0px -65% 0px',
+        threshold: [0.1, 0.35, 0.65],
       },
     );
 
-    ids.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
-      }
-    });
+    headingElements.forEach((heading) => observer.observe(heading));
 
     return () => observer.disconnect();
-  }, [ids]);
+  }, [itemIds]);
 
-  const moveToHeading = (id: string) => {
-    const element = document.getElementById(id);
-    if (!element) {
-      return;
-    }
-
-    const top = window.scrollY + element.getBoundingClientRect().top - HEADER_OFFSET;
-    window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
-    history.replaceState(null, '', `#${encodeURIComponent(id)}`);
-    setActiveId(id);
-  };
-
-  if (!headings.length) {
-    return <p className="text-xs text-[var(--muted)]">표시할 목차가 없습니다.</p>;
+  if (!items.length) {
+    return null;
   }
 
   return (
-    <ul className="table-of-contents space-y-2 text-sm">
-      {headings.map((heading) => (
-        <li key={heading.id} className={heading.level === 3 ? 'pl-3' : ''}>
-          <button
-            type="button"
-            onClick={() => moveToHeading(heading.id)}
-            className={`w-full cursor-pointer text-left transition hover:underline ${
-              activeId === heading.id ? 'font-semibold text-[var(--theme)]' : 'text-[var(--text)]'
-            }`}
-          >
-            {heading.text}
-          </button>
-        </li>
-      ))}
-    </ul>
+    <aside className="sticky top-24 hidden h-fit rounded-xl border border-[#2a2b31] bg-[#fff8f4] p-4 shadow-[4px_4px_0_0_#2a2b31] xl:block">
+      <p className="mb-3 font-mono text-xs font-bold tracking-wide text-[#6b7280]">Table of Contents</p>
+      <nav aria-label="문서 목차">
+        <ul className="space-y-1">
+          {items.map((item) => {
+            const isActive = activeId === item.id;
+
+            return (
+              <li key={item.id} className={item.level === 3 ? 'pl-3' : ''}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className={`block rounded-md border px-2 py-1 text-sm transition ${
+                    isActive
+                      ? 'border-[#2a2b31] bg-[#ffddca] font-semibold text-[#111827] shadow-[2px_2px_0_0_#2a2b31]'
+                      : 'border-transparent text-[#4b5563] hover:border-[#f4b297] hover:bg-[#fff1ea]'
+                  }`}
+                >
+                  {item.text}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </aside>
   );
 }

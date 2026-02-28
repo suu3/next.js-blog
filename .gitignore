@@ -63,3 +63,6 @@ typings/
 # 비공개 게시물
 @Private
 .next
+
+out
+public/content-assets
