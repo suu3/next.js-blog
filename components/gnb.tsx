@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const items = [
-  { href: '/', label: 'Home' },
   { href: '/category', label: 'Category' },
+  { href: '/tag', label: 'Tag' },
 ];
 
 export default function Gnb() {
@@ -14,7 +14,7 @@ export default function Gnb() {
   return (
     <nav className="neo-gnb flex items-center gap-2 text-sm font-semibold">
       {items.map((item) => {
-        const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+        const active = pathname.startsWith(item.href);
 
         return (
           <Link

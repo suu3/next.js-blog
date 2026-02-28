@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import Gnb from '@/components/gnb';
 import ThemeBtn from '@/components/theme-btn';
+import MobileScrollControls from '@/components/mobile-scroll-controls';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <div className="page-shell">
           <main className="mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
+          <MobileScrollControls />
           <footer className="mt-auto border-t border-[var(--line)] bg-[var(--surface)]">
             <div className="mx-auto flex h-20 w-full max-w-5xl flex-col items-center justify-center gap-1 px-4 text-xs text-[var(--muted)]">
               <p className="font-semibold text-[var(--text)]">@Suu3</p>

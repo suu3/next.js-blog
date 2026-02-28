@@ -16,7 +16,7 @@ type Block =
   | { type: 'ul'; items: ListItem[] }
   | { type: 'ol'; items: ListItem[] }
   | { type: 'blockquote'; text: string }
-  | { type: 'code'; text: string };
+  | { type: 'code'; text: string; language: string };
 
 function getLeadingSpaces(value: string): number {
   return value.length - value.trimStart().length;
@@ -27,17 +27,13 @@ function parseUnorderedList(lines: string[], start: number) {
   let i = start;
 
   while (i < lines.length) {
-    const rawLine = lines[i];
-    const normalizedLine = rawLine.trimStart();
+    const normalizedLine = lines[i].trimStart();
 
     if (!/^[-*]\s+/.test(normalizedLine)) {
       break;
     }
 
-    items.push({
-      text: normalizedLine.replace(/^[-*]\s+/, '').trim(),
-      children: [],
-    });
+    items.push({ text: normalizedLine.replace(/^[-*]\s+/, '').trim(), children: [] });
     i += 1;
   }
 
@@ -49,19 +45,14 @@ function parseOrderedList(lines: string[], start: number) {
   let i = start;
 
   while (i < lines.length) {
-    const rawLine = lines[i];
-    const normalizedLine = rawLine.trimStart();
-
+    const normalizedLine = lines[i].trimStart();
     const orderedMatch = normalizedLine.match(/^\d+\.\s+(.*)$/);
 
     if (!orderedMatch) {
       break;
     }
 
-    const item: ListItem = {
-      text: orderedMatch[1].trim(),
-      children: [],
-    };
+    const item: ListItem = { text: orderedMatch[1].trim(), children: [] };
 
     i += 1;
 
@@ -108,8 +99,7 @@ function parseBlocks(content: string): Block[] {
   let i = 0;
 
   while (i < lines.length) {
-    const rawLine = lines[i];
-    const line = rawLine.trimEnd();
+    const line = lines[i].trimEnd();
     const normalizedLine = line.trimStart();
 
     if (!normalizedLine) {
@@ -119,13 +109,14 @@ function parseBlocks(content: string): Block[] {
 
     if (normalizedLine.startsWith('```')) {
       const codeLines: string[] = [];
+      const language = normalizedLine.replace('```', '').trim() || 'text';
       i += 1;
       while (i < lines.length && !lines[i].trimStart().startsWith('```')) {
         codeLines.push(lines[i]);
         i += 1;
       }
       i += 1;
-      blocks.push({ type: 'code', text: codeLines.join('\n') });
+      blocks.push({ type: 'code', text: codeLines.join('\n'), language });
       continue;
     }
 
@@ -159,20 +150,16 @@ function parseBlocks(content: string): Block[] {
     const paragraphLines: string[] = [normalizedLine];
     i += 1;
     while (i < lines.length) {
-      const nextLine = lines[i].trimEnd();
-      const normalizedNextLine = nextLine.trimStart();
+      const normalizedNextLine = lines[i].trimEnd().trimStart();
 
-      if (!normalizedNextLine) {
-        break;
-      }
-
-      if (/^(##|###|```|>\s+|[-*]\s+|\d+\.\s+)/.test(normalizedNextLine)) {
+      if (!normalizedNextLine || /^(##|###|```|>\s+|[-*]\s+|\d+\.\s+)/.test(normalizedNextLine)) {
         break;
       }
 
       paragraphLines.push(normalizedNextLine);
       i += 1;
     }
+
     blocks.push({ type: 'p', text: paragraphLines.join(' ') });
   }
 
@@ -188,7 +175,7 @@ function renderBoldText(text: string, keyPrefix: string): ReactNode[] {
 
       if (boldMatch) {
         return (
-          <strong key={`${keyPrefix}-strong-${index}`} className="font-extrabold text-[#1f2937]">
+          <strong key={`${keyPrefix}-strong-${index}`} className="font-extrabold text-[var(--text)]">
             {boldMatch[1]}
           </strong>
         );
@@ -208,16 +195,16 @@ function renderInline(text: string): ReactNode[] {
       const [, alt, src, caption] = imageMatch;
 
       return (
-        <figure key={`image-${index}`} className="my-4 overflow-hidden rounded-lg border border-[#2a2b31] bg-white shadow-[2px_2px_0_0_#2a2b31]">
+        <figure key={`image-${index}`} className="my-4 overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--surface)] shadow-[2px_2px_0_0_var(--line)]">
           <img src={src} alt={alt} className="w-full" loading="lazy" />
-          {(caption || alt) && <figcaption className="border-t border-[#2a2b31] bg-[#fff8f4] px-3 py-2 text-sm text-[#6b7280]">{caption || alt}</figcaption>}
+          {(caption || alt) && <figcaption className="border-t border-[var(--line)] bg-[var(--theme-soft)] px-3 py-2 text-sm text-[var(--muted)]">{caption || alt}</figcaption>}
         </figure>
       );
     }
 
     if (/^`[^`]+`$/.test(chunk)) {
       return (
-        <code key={`code-${index}`} className="rounded bg-[#ffe5d7] px-1.5 py-0.5 font-mono text-[0.92em] text-[#9a3412]">
+        <code key={`code-${index}`} className="rounded bg-[var(--theme-soft)] px-1.5 py-0.5 font-mono text-[0.92em] text-[var(--text)]">
           {chunk.slice(1, -1)}
         </code>
       );
@@ -226,11 +213,7 @@ function renderInline(text: string): ReactNode[] {
     const linkMatch = chunk.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
     if (linkMatch) {
       return (
-        <a
-          key={`link-${index}`}
-          href={linkMatch[2]}
-          className="font-semibold text-[var(--theme)] underline decoration-[#ff9f7b] underline-offset-4 hover:text-[#c2461d]"
-        >
+        <a key={`link-${index}`} href={linkMatch[2]} className="font-semibold text-[var(--theme)] underline decoration-[var(--theme)] underline-offset-4 hover:opacity-80">
           {renderBoldText(linkMatch[1], `link-${index}`)}
         </a>
       );
@@ -249,24 +232,24 @@ export default function PostMarkdown({ content }: Props) {
         switch (block.type) {
           case 'h2':
             return (
-              <h2 key={`${block.type}-${index}`} id={slugifyHeading(block.text)} className="mt-10 scroll-mt-24 text-2xl font-extrabold tracking-tight text-[#1f2937]">
+              <h2 key={`${block.type}-${index}`} id={slugifyHeading(block.text)} className="mt-10 scroll-mt-24 text-2xl font-extrabold tracking-tight">
                 {block.text}
               </h2>
             );
           case 'h3':
             return (
-              <h3 key={`${block.type}-${index}`} id={slugifyHeading(block.text)} className="mt-8 scroll-mt-24 text-xl font-bold tracking-tight text-[#374151]">
+              <h3 key={`${block.type}-${index}`} id={slugifyHeading(block.text)} className="mt-8 scroll-mt-24 text-xl font-bold tracking-tight">
                 {block.text}
               </h3>
             );
           case 'ul':
             return (
-              <ul key={`${block.type}-${index}`} className="mt-4 list-disc space-y-2 pl-6 text-[#374151]">
+              <ul key={`${block.type}-${index}`} className="mt-4 list-disc space-y-2 pl-6">
                 {block.items.map((item, itemIndex) => (
                   <li key={`${item.text}-${itemIndex}`} className="leading-7">
                     {renderInline(item.text)}
                     {item.children.length > 0 && (
-                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[#4b5563]">
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[var(--muted)]">
                         {item.children.map((child, childIndex) => (
                           <li key={`${child}-${childIndex}`}>{renderInline(child)}</li>
                         ))}
@@ -278,12 +261,12 @@ export default function PostMarkdown({ content }: Props) {
             );
           case 'ol':
             return (
-              <ol key={`${block.type}-${index}`} className="mt-4 list-decimal space-y-3 pl-6 text-[#374151]">
+              <ol key={`${block.type}-${index}`} className="mt-4 list-decimal space-y-3 pl-6">
                 {block.items.map((item, itemIndex) => (
                   <li key={`${item.text}-${itemIndex}`} className="leading-7">
                     {renderInline(item.text)}
                     {item.children.length > 0 && (
-                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[#4b5563]">
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[var(--muted)]">
                         {item.children.map((child, childIndex) => (
                           <li key={`${child}-${childIndex}`}>{renderInline(child)}</li>
                         ))}
@@ -295,19 +278,24 @@ export default function PostMarkdown({ content }: Props) {
             );
           case 'blockquote':
             return (
-              <blockquote key={`${block.type}-${index}`} className="mt-6 border-l-4 border-[#ffb999] bg-[#fff3ed] px-4 py-3 text-[#7c2d12]">
+              <blockquote key={`${block.type}-${index}`} className="mt-6 border-l-4 border-[var(--theme)] bg-[var(--theme-soft)] px-4 py-3 text-[var(--text)]">
                 {renderInline(block.text)}
               </blockquote>
             );
           case 'code':
             return (
-              <pre key={`${block.type}-${index}`} className="mt-5 overflow-x-auto rounded-lg border border-[#2a2b31] bg-[#1f2937] p-4 font-mono text-sm leading-6 text-[#f9fafb]">
-                <code>{block.text}</code>
-              </pre>
+              <div key={`${block.type}-${index}`} className="mt-5 overflow-hidden rounded-lg border border-[var(--line)]">
+                <div className="flex items-center justify-between border-b border-[var(--line)] bg-[var(--theme-soft)] px-3 py-1.5">
+                  <span className="font-mono text-xs uppercase tracking-wide">{block.language}</span>
+                </div>
+                <pre className="overflow-x-auto bg-[#1f2937] p-4 font-mono text-sm leading-6 text-[#f9fafb]">
+                  <code>{block.text}</code>
+                </pre>
+              </div>
             );
           case 'p':
             return (
-              <p key={`${block.type}-${index}`} className="mt-4 leading-8 text-[#374151]">
+              <p key={`${block.type}-${index}`} className="mt-4 leading-8">
                 {renderInline(block.text)}
               </p>
             );
