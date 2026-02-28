@@ -12,6 +12,8 @@ type Props = {
   headings: Heading[];
 };
 
+const HEADER_OFFSET = 96;
+
 export default function PostToc({ headings }: Props) {
   const ids = useMemo(() => headings.map((heading) => heading.id), [headings]);
   const [activeId, setActiveId] = useState<string>('');
@@ -19,6 +21,13 @@ export default function PostToc({ headings }: Props) {
   useEffect(() => {
     if (!ids.length) {
       return;
+    }
+
+    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+    if (hash && ids.includes(hash)) {
+      setActiveId(hash);
+    } else {
+      setActiveId(ids[0]);
     }
 
     const observer = new IntersectionObserver(
@@ -32,8 +41,8 @@ export default function PostToc({ headings }: Props) {
         }
       },
       {
-        rootMargin: '-96px 0px -70% 0px',
-        threshold: [0, 0.2, 1],
+        rootMargin: `-${HEADER_OFFSET}px 0px -65% 0px`,
+        threshold: [0, 0.25, 1],
       },
     );
 
@@ -44,11 +53,6 @@ export default function PostToc({ headings }: Props) {
       }
     });
 
-    const first = document.getElementById(ids[0]);
-    if (first) {
-      setActiveId(first.id);
-    }
-
     return () => observer.disconnect();
   }, [ids]);
 
@@ -58,31 +62,29 @@ export default function PostToc({ headings }: Props) {
       return;
     }
 
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.replaceState(null, '', `#${id}`);
+    const top = window.scrollY + element.getBoundingClientRect().top - HEADER_OFFSET;
+    window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    history.replaceState(null, '', `#${encodeURIComponent(id)}`);
     setActiveId(id);
   };
 
   if (!headings.length) {
-    return <p className="text-xs text-gray-500">표시할 목차가 없습니다.</p>;
+    return <p className="text-xs text-[var(--muted)]">표시할 목차가 없습니다.</p>;
   }
 
   return (
-    <ul className="space-y-2 text-sm table-of-contents">
+    <ul className="table-of-contents space-y-2 text-sm">
       {headings.map((heading) => (
         <li key={heading.id} className={heading.level === 3 ? 'pl-3' : ''}>
-          <a
-            href={`#${heading.id}`}
-            onClick={(event) => {
-              event.preventDefault();
-              moveToHeading(heading.id);
-            }}
-            className={`transition hover:text-[var(--theme)] hover:underline ${
-              activeId === heading.id ? 'font-semibold text-[var(--theme)]' : 'text-gray-700'
+          <button
+            type="button"
+            onClick={() => moveToHeading(heading.id)}
+            className={`w-full cursor-pointer text-left transition hover:underline ${
+              activeId === heading.id ? 'font-semibold text-[var(--theme)]' : 'text-[var(--text)]'
             }`}
           >
             {heading.text}
-          </a>
+          </button>
         </li>
       ))}
     </ul>

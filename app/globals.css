@@ -34,7 +34,7 @@ a {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #eceae6;
+  background: var(--bg);
   background-image: radial-gradient(circle at 84% -5%, #f7c532 0 110px, transparent 111px), url("/images/background.svg");
   background-size: auto, 1700px auto;
   background-position: top right, center top;
@@ -46,7 +46,7 @@ main {
 }
 
 .neo-frame {
-  box-shadow: 4px 4px 0 #2a2b31;
+  box-shadow: 3px 3px 0 var(--line);
 }
 
 .neo-gnb-link {
@@ -84,13 +84,13 @@ main {
 }
 
 .y2k-hero {
-  box-shadow: 3px 3px 0 0 #2a2b31;
+  box-shadow: 2px 2px 0 0 var(--line);
 }
 
 .y2k-title {
   font-family: var(--y2k-display);
   letter-spacing: 0.02em;
-  color: #2a2b31;
+  color: var(--text);
 }
 
 .hero-icon-left {
@@ -113,7 +113,7 @@ main {
   top: 8px;
   width: 140px;
   height: 110px;
-  background-image: radial-gradient(circle, #fff 0 4px, transparent 4px), radial-gradient(circle, #ff6737 0 2px, transparent 2px), radial-gradient(circle, #2a2b31 0 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle, #fff 0 4px, transparent 4px), radial-gradient(circle, var(--theme) 0 2px, transparent 2px), radial-gradient(circle, var(--line) 0 1.5px, transparent 1.5px);
   background-position: 6% 20%, 56% 55%, 82% 10%;
   background-repeat: no-repeat;
 }

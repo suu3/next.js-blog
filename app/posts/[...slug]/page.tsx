@@ -23,9 +23,23 @@ type Block =
 function toHeadingId(text: string) {
   return text
     .trim()
+    .toLowerCase()
+    .replace(/[~`!@#$%^&*()+={}[\]|\\:;"'<>,.?/]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/[.,!?()[\]{}'"`~:@#$%^&*+=<>/\\|]/g, '')
-    .toLowerCase();
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function createUniqueHeadingId(text: string, idCountMap: Map<string, number>) {
+  const normalized = toHeadingId(text) || 'section';
+  const count = (idCountMap.get(normalized) ?? 0) + 1;
+  idCountMap.set(normalized, count);
+
+  if (count === 1) {
+    return normalized;
+  }
+
+  return `${normalized}-${count}`;
 }
 
 function formatInlineMarkdown(text: string) {
@@ -42,6 +56,7 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
   const lines = content.replace(/\r\n/g, '\n').split('\n');
   const blocks: Block[] = [];
   const headings: Heading[] = [];
+  const idCountMap = new Map<string, number>();
 
   let i = 0;
   while (i < lines.length) {
@@ -66,7 +81,7 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
 
     if (line.startsWith('# ')) {
       const text = line.replace(/^#\s+/, '').trim();
-      const id = toHeadingId(text);
+      const id = createUniqueHeadingId(text, idCountMap);
       headings.push({ id, text, level: 2 });
       blocks.push({ type: 'heading', level: 2, text, id });
       i += 1;
@@ -75,7 +90,7 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
 
     if (line.startsWith('## ')) {
       const text = line.replace(/^##\s+/, '').trim();
-      const id = toHeadingId(text);
+      const id = createUniqueHeadingId(text, idCountMap);
       headings.push({ id, text, level: 2 });
       blocks.push({ type: 'heading', level: 2, text, id });
       i += 1;
@@ -84,7 +99,7 @@ function parseMarkdown(content: string): { blocks: Block[]; headings: Heading[] 
 
     if (line.startsWith('### ')) {
       const text = line.replace(/^###\s+/, '').trim();
-      const id = toHeadingId(text);
+      const id = createUniqueHeadingId(text, idCountMap);
       headings.push({ id, text, level: 3 });
       blocks.push({ type: 'heading', level: 3, text, id });
       i += 1;
@@ -154,16 +169,16 @@ export default async function PostDetailPage({ params }: Props) {
 
   return (
     <section className="grid gap-6 md:grid-cols-[minmax(0,1fr)_220px]">
-      <article className="rounded-xl border border-[#2a2b31] bg-white p-6 shadow-[2px_2px_0_0_#2a2b31]">
-        <p className="mb-2 inline-block rounded-md bg-[#ffddca] px-2 py-1 font-mono text-xs">{post.category}</p>
-        <h1 className="text-3xl font-black tracking-tight">{post.title}</h1>
-        <p className="mt-2 text-sm text-gray-500">{post.date}</p>
-        <p className="mt-4 leading-7 text-gray-700">{post.description}</p>
-        <div className="mt-3 flex flex-wrap items-center gap-1 text-sm text-gray-600">
+      <article className="rounded-xl border-[2px] border-[var(--line)] bg-[var(--surface)] p-6 shadow-[2px_2px_0_0_var(--line)]">
+        <p className="mb-2 inline-block rounded-md bg-[var(--theme-soft)] px-2 py-1 font-mono text-xs">{post.category}</p>
+        <h1 className="text-3xl font-black tracking-tight text-[var(--text)]">{post.title}</h1>
+        <p className="mt-2 text-sm text-[var(--muted)]">{post.date}</p>
+        <p className="mt-4 leading-7 text-[color:color-mix(in_oklab,var(--text)_85%,white)]">{post.description}</p>
+        <div className="mt-3 flex flex-wrap items-center gap-1 text-sm text-[var(--muted)]">
           <span>태그:</span>
           {post.tags.length ? (
             post.tags.map((tag) => (
-              <span key={tag} className="rounded border border-[#2a2b31] bg-[#ffefe5] px-2 py-0.5 text-xs">
+              <span key={tag} className="rounded border-[2px] border-[var(--line)] bg-[var(--theme-soft)] px-2 py-0.5 text-xs text-[var(--text)]">
                 #{tag}
               </span>
             ))
@@ -171,9 +186,9 @@ export default async function PostDetailPage({ params }: Props) {
             <span>없음</span>
           )}
         </div>
-        <hr className="my-6 border-[#2a2b31]" />
+        <hr className="my-6 border-[var(--line)]" />
 
-        <div className="space-y-4 prose prose-neutral max-w-none prose-a:text-[var(--theme)]">
+        <div className="space-y-4 prose prose-neutral max-w-none prose-a:text-[var(--theme)] prose-strong:text-[var(--text)]">
           {blocks.map((block, index) => {
             if (block.type === 'heading') {
               if (block.level === 2) {
@@ -181,7 +196,7 @@ export default async function PostDetailPage({ params }: Props) {
                   <h2
                     key={`${block.id}-${index}`}
                     id={block.id}
-                    className="mt-6 scroll-mt-24 text-2xl font-black tracking-tight"
+                    className="mt-6 scroll-mt-24 text-2xl font-black tracking-tight text-[var(--text)]"
                   >
                     {block.text}
                   </h2>
@@ -192,7 +207,7 @@ export default async function PostDetailPage({ params }: Props) {
                 <h3
                   key={`${block.id}-${index}`}
                   id={block.id}
-                  className="mt-4 scroll-mt-24 text-xl font-bold tracking-tight"
+                  className="mt-4 scroll-mt-24 text-xl font-bold tracking-tight text-[var(--text)]"
                 >
                   {block.text}
                 </h3>
@@ -202,7 +217,7 @@ export default async function PostDetailPage({ params }: Props) {
             if (block.type === 'list') {
               if (block.ordered) {
                 return (
-                  <ol key={`olist-${index}`} className="list-decimal space-y-1 pl-5 text-gray-800">
+                  <ol key={`olist-${index}`} className="list-decimal space-y-1 pl-5 text-[var(--text)]">
                     {block.items.map((item, itemIndex) => (
                       <li key={`${item}-${itemIndex}`} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
                     ))}
@@ -211,7 +226,7 @@ export default async function PostDetailPage({ params }: Props) {
               }
 
               return (
-                <ul key={`ulist-${index}`} className="list-disc space-y-1 pl-5 text-gray-800">
+                <ul key={`ulist-${index}`} className="list-disc space-y-1 pl-5 text-[var(--text)]">
                   {block.items.map((item, itemIndex) => (
                     <li key={`${item}-${itemIndex}`} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
                   ))}
@@ -223,7 +238,7 @@ export default async function PostDetailPage({ params }: Props) {
               return (
                 <pre
                   key={`code-${index}`}
-                  className="overflow-x-auto rounded-lg border border-[#2a2b31] bg-[#f6f3ef] p-4 text-sm leading-6"
+                  className="overflow-x-auto rounded-lg border-[2px] border-[var(--line)] bg-[var(--bg)] p-4 text-sm leading-6 text-[var(--text)]"
                 >
                   {block.code}
                 </pre>
@@ -233,7 +248,7 @@ export default async function PostDetailPage({ params }: Props) {
             return (
               <p
                 key={`p-${index}`}
-                className="leading-8 text-gray-800"
+                className="leading-8 text-[var(--text)]"
                 dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(block.text) }}
               />
             );
@@ -242,14 +257,17 @@ export default async function PostDetailPage({ params }: Props) {
 
         <PostComments />
 
-        <Link href="/" className="mt-8 inline-block rounded border border-[#2a2b31] px-3 py-2 text-sm hover:bg-[#ffddca]">
+        <Link
+          href="/"
+          className="mt-8 inline-block rounded border-[2px] border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] hover:bg-[var(--theme-soft)]"
+        >
           ← 목록으로
         </Link>
       </article>
 
       <aside className="hidden md:block">
-        <div className="sticky top-24 rounded-xl border border-[#2a2b31] bg-white p-4 shadow-[2px_2px_0_0_#2a2b31]">
-          <p className="mb-3 text-sm font-black">Index</p>
+        <div className="sticky top-24 rounded-xl border-[2px] border-[var(--line)] bg-[var(--surface)] p-4 shadow-[2px_2px_0_0_var(--line)]">
+          <p className="mb-3 text-sm font-black text-[var(--text)]">Index</p>
           <PostToc headings={headings} />
         </div>
       </aside>
