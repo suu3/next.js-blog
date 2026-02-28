@@ -19,17 +19,19 @@ function parseBlocks(content: string): Block[] {
   let i = 0;
 
   while (i < lines.length) {
-    const line = lines[i].trimEnd();
+    const rawLine = lines[i];
+    const line = rawLine.trimEnd();
+    const normalizedLine = line.trimStart();
 
-    if (!line.trim()) {
+    if (!normalizedLine) {
       i += 1;
       continue;
     }
 
-    if (line.startsWith('```')) {
+    if (normalizedLine.startsWith('```')) {
       const codeLines: string[] = [];
       i += 1;
-      while (i < lines.length && !lines[i].startsWith('```')) {
+      while (i < lines.length && !lines[i].trimStart().startsWith('```')) {
         codeLines.push(lines[i]);
         i += 1;
       }
@@ -38,43 +40,54 @@ function parseBlocks(content: string): Block[] {
       continue;
     }
 
-    const heading = line.match(/^(##|###)\s+(.*)$/);
+    const heading = normalizedLine.match(/^(##|###)\s+(.*)$/);
     if (heading) {
       blocks.push({ type: heading[1].length === 2 ? 'h2' : 'h3', text: heading[2].trim() });
       i += 1;
       continue;
     }
 
-    if (line.startsWith('> ')) {
-      blocks.push({ type: 'blockquote', text: line.replace(/^>\s*/, '') });
+    if (normalizedLine.startsWith('> ')) {
+      blocks.push({ type: 'blockquote', text: normalizedLine.replace(/^>\s*/, '') });
       i += 1;
       continue;
     }
 
-    if (/^-\s+/.test(line)) {
+    if (/^[-*]\s+/.test(normalizedLine)) {
       const items: string[] = [];
-      while (i < lines.length && /^-\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^-\s+/, '').trim());
+      while (i < lines.length && /^[-*]\s+/.test(lines[i].trimStart())) {
+        items.push(lines[i].trimStart().replace(/^[-*]\s+/, '').trim());
         i += 1;
       }
       blocks.push({ type: 'ul', items });
       continue;
     }
 
-    if (/^\d+\.\s+/.test(line)) {
+    if (/^\d+\.\s+/.test(normalizedLine)) {
       const items: string[] = [];
-      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\d+\.\s+/, '').trim());
+      while (i < lines.length && /^\d+\.\s+/.test(lines[i].trimStart())) {
+        items.push(lines[i].trimStart().replace(/^\d+\.\s+/, '').trim());
         i += 1;
       }
       blocks.push({ type: 'ol', items });
       continue;
     }
 
-    const paragraphLines: string[] = [line];
+    const paragraphLines: string[] = [normalizedLine];
     i += 1;
-    while (i < lines.length && lines[i].trim() && !/^(##|###|```|>\s+|-\s+|\d+\.\s+)/.test(lines[i])) {
-      paragraphLines.push(lines[i].trimEnd());
+    while (i < lines.length) {
+      const nextLine = lines[i].trimEnd();
+      const normalizedNextLine = nextLine.trimStart();
+
+      if (!normalizedNextLine) {
+        break;
+      }
+
+      if (/^(##|###|```|>\s+|[-*]\s+|\d+\.\s+)/.test(normalizedNextLine)) {
+        break;
+      }
+
+      paragraphLines.push(normalizedNextLine);
       i += 1;
     }
     blocks.push({ type: 'p', text: paragraphLines.join(' ') });
@@ -82,6 +95,7 @@ function parseBlocks(content: string): Block[] {
 
   return blocks;
 }
+
 
 function renderBoldText(text: string, keyPrefix: string): ReactNode[] {
   return text
@@ -120,7 +134,7 @@ function renderInline(text: string): ReactNode[] {
         <a
           key={`link-${index}`}
           href={linkMatch[2]}
-          className="font-semibold text-[#e85d2d] underline decoration-[#ff9f7b] underline-offset-4 hover:text-[#c2461d]"
+          className="font-semibold text-[var(--theme)] underline decoration-[#ff9f7b] underline-offset-4 hover:text-[#c2461d]"
         >
           {renderBoldText(linkMatch[1], `link-${index}`)}
         </a>
