@@ -83,6 +83,25 @@ function parseBlocks(content: string): Block[] {
   return blocks;
 }
 
+function renderBoldText(text: string, keyPrefix: string): ReactNode[] {
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .filter(Boolean)
+    .map((chunk, index) => {
+      const boldMatch = chunk.match(/^\*\*([^*]+)\*\*$/);
+
+      if (boldMatch) {
+        return (
+          <strong key={`${keyPrefix}-strong-${index}`} className="font-extrabold text-[#1f2937]">
+            {boldMatch[1]}
+          </strong>
+        );
+      }
+
+      return <Fragment key={`${keyPrefix}-text-${index}`}>{chunk}</Fragment>;
+    });
+}
+
 function renderInline(text: string): ReactNode[] {
   const chunks = text.split(/(`[^`]+`|\[[^\]]+\]\([^\)]+\))/g).filter(Boolean);
 
@@ -103,12 +122,12 @@ function renderInline(text: string): ReactNode[] {
           href={linkMatch[2]}
           className="font-semibold text-[#e85d2d] underline decoration-[#ff9f7b] underline-offset-4 hover:text-[#c2461d]"
         >
-          {linkMatch[1]}
+          {renderBoldText(linkMatch[1], `link-${index}`)}
         </a>
       );
     }
 
-    return <Fragment key={`text-${index}`}>{chunk}</Fragment>;
+    return <Fragment key={`text-${index}`}>{renderBoldText(chunk, `plain-${index}`)}</Fragment>;
   });
 }
 
