@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import PostComments from '@/components/post-comments';
 import PostToc from '@/components/post-toc';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
 
@@ -20,13 +21,11 @@ type Block =
   | { type: 'code'; code: string };
 
 function toHeadingId(text: string) {
-  return encodeURIComponent(
-    text
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[.,!?()[\]{}'"`~:@#$%^&*+=<>/\\|]/g, ''),
-  );
+  return text
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[.,!?()[\]{}'"`~:@#$%^&*+=<>/\\|]/g, '')
+    .toLowerCase();
 }
 
 function formatInlineMarkdown(text: string) {
@@ -160,22 +159,41 @@ export default async function PostDetailPage({ params }: Props) {
         <h1 className="text-3xl font-black tracking-tight">{post.title}</h1>
         <p className="mt-2 text-sm text-gray-500">{post.date}</p>
         <p className="mt-4 leading-7 text-gray-700">{post.description}</p>
-        <p className="mt-3 text-sm text-gray-600">태그: {post.tags.join(', ') || '없음'}</p>
+        <div className="mt-3 flex flex-wrap items-center gap-1 text-sm text-gray-600">
+          <span>태그:</span>
+          {post.tags.length ? (
+            post.tags.map((tag) => (
+              <span key={tag} className="rounded border border-[#2a2b31] bg-[#ffefe5] px-2 py-0.5 text-xs">
+                #{tag}
+              </span>
+            ))
+          ) : (
+            <span>없음</span>
+          )}
+        </div>
         <hr className="my-6 border-[#2a2b31]" />
 
-        <div className="space-y-4 prose prose-neutral max-w-none prose-a:text-[#ff6737]">
+        <div className="space-y-4 prose prose-neutral max-w-none prose-a:text-[var(--theme)]">
           {blocks.map((block, index) => {
             if (block.type === 'heading') {
               if (block.level === 2) {
                 return (
-                  <h2 key={`${block.id}-${index}`} id={block.id} className="mt-6 text-2xl font-black tracking-tight">
+                  <h2
+                    key={`${block.id}-${index}`}
+                    id={block.id}
+                    className="mt-6 scroll-mt-24 text-2xl font-black tracking-tight"
+                  >
                     {block.text}
                   </h2>
                 );
               }
 
               return (
-                <h3 key={`${block.id}-${index}`} id={block.id} className="mt-4 text-xl font-bold tracking-tight">
+                <h3
+                  key={`${block.id}-${index}`}
+                  id={block.id}
+                  className="mt-4 scroll-mt-24 text-xl font-bold tracking-tight"
+                >
                   {block.text}
                 </h3>
               );
@@ -213,10 +231,16 @@ export default async function PostDetailPage({ params }: Props) {
             }
 
             return (
-              <p key={`p-${index}`} className="leading-8 text-gray-800" dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(block.text) }} />
+              <p
+                key={`p-${index}`}
+                className="leading-8 text-gray-800"
+                dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(block.text) }}
+              />
             );
           })}
         </div>
+
+        <PostComments />
 
         <Link href="/" className="mt-8 inline-block rounded border border-[#2a2b31] px-3 py-2 text-sm hover:bg-[#ffddca]">
           ← 목록으로

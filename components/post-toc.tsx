@@ -21,33 +21,47 @@ export default function PostToc({ headings }: Props) {
       return;
     }
 
-    const onScroll = () => {
-      const candidates = ids
-        .map((id) => {
-          const element = document.getElementById(id);
-          if (!element) {
-            return null;
-          }
-          return { id, top: element.getBoundingClientRect().top };
-        })
-        .filter((value): value is { id: string; top: number } => value !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
 
-      const passed = candidates.filter((item) => item.top <= 120);
+        if (visible.length) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: '-96px 0px -70% 0px',
+        threshold: [0, 0.2, 1],
+      },
+    );
 
-      if (passed.length) {
-        setActiveId(passed[passed.length - 1].id);
-      } else if (candidates.length) {
-        setActiveId(candidates[0].id);
+    ids.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
       }
-    };
+    });
 
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const first = document.getElementById(ids[0]);
+    if (first) {
+      setActiveId(first.id);
+    }
 
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
+    return () => observer.disconnect();
   }, [ids]);
+
+  const moveToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) {
+      return;
+    }
+
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', `#${id}`);
+    setActiveId(id);
+  };
 
   if (!headings.length) {
     return <p className="text-xs text-gray-500">표시할 목차가 없습니다.</p>;
@@ -59,8 +73,12 @@ export default function PostToc({ headings }: Props) {
         <li key={heading.id} className={heading.level === 3 ? 'pl-3' : ''}>
           <a
             href={`#${heading.id}`}
-            className={`transition hover:text-[#ff6737] hover:underline ${
-              activeId === heading.id ? 'font-semibold text-[#ff6737]' : 'text-gray-700'
+            onClick={(event) => {
+              event.preventDefault();
+              moveToHeading(heading.id);
+            }}
+            className={`transition hover:text-[var(--theme)] hover:underline ${
+              activeId === heading.id ? 'font-semibold text-[var(--theme)]' : 'text-gray-700'
             }`}
           >
             {heading.text}
