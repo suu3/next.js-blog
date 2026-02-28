@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PostMarkdown from '@/components/post-markdown';
 import PostToc from '@/components/post-toc';
+import PostComments from '@/components/post-comments';
 import { extractHeadings } from '@/lib/markdown';
 import { getAllPosts, getPostBySlug } from '@/lib/posts';
 
@@ -55,6 +56,8 @@ export default async function PostDetailPage({ params }: Props) {
         >
           ← 목록으로
         </Link>
+
+        <PostComments issueTerm={post.slug} />
       </article>
 
       <PostToc items={headings} />

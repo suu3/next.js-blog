@@ -96,7 +96,6 @@ function parseBlocks(content: string): Block[] {
   return blocks;
 }
 
-
 function renderBoldText(text: string, keyPrefix: string): ReactNode[] {
   return text
     .split(/(\*\*[^*]+\*\*)/g)
@@ -117,9 +116,22 @@ function renderBoldText(text: string, keyPrefix: string): ReactNode[] {
 }
 
 function renderInline(text: string): ReactNode[] {
-  const chunks = text.split(/(`[^`]+`|\[[^\]]+\]\([^\)]+\))/g).filter(Boolean);
+  const chunks = text.split(/(!\[[^\]]*\]\([^\)]+\)|`[^`]+`|\[[^\]]+\]\([^\)]+\))/g).filter(Boolean);
 
   return chunks.map((chunk, index) => {
+    const imageMatch = chunk.match(/^!\[([^\]]*)\]\(([^\s\)]+)(?:\s+"([^"]+)")?\)$/);
+
+    if (imageMatch) {
+      const [, alt, src, caption] = imageMatch;
+
+      return (
+        <figure key={`image-${index}`} className="my-4 overflow-hidden rounded-lg border border-[#2a2b31] bg-white shadow-[2px_2px_0_0_#2a2b31]">
+          <img src={src} alt={alt} className="w-full" loading="lazy" />
+          {(caption || alt) && <figcaption className="border-t border-[#2a2b31] bg-[#fff8f4] px-3 py-2 text-sm text-[#6b7280]">{caption || alt}</figcaption>}
+        </figure>
+      );
+    }
+
     if (/^`[^`]+`$/.test(chunk)) {
       return (
         <code key={`code-${index}`} className="rounded bg-[#ffe5d7] px-1.5 py-0.5 font-mono text-[0.92em] text-[#9a3412]">
