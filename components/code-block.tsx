@@ -23,7 +23,7 @@ export default function CodeBlock({ language, code, highlightedHtml }: Props) {
   };
 
   return (
-    <div className={css({ mt: '1.25rem', overflow: 'hidden', borderRadius: '0.5rem', border: '1px solid var(--line)' })}>
+    <div className={css({ mt: '1.25rem', overflow: 'hidden', borderRadius: '0.5rem', border: '1px solid var(--line)', width: '100%', minWidth: 0 })}>
       <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', bg: 'var(--theme-soft)', px: '0.75rem', py: '0.375rem' })}>
         <span className={css({ fontFamily: 'FiraCode-Medium, monospace', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.025em' })}>{language}</span>
         <button 
@@ -43,12 +43,14 @@ export default function CodeBlock({ language, code, highlightedHtml }: Props) {
       <pre className={css({ 
         margin: 0, 
         overflowX: 'auto', 
+        maxWidth: '100%', // 컨테이너 너비를 넘지 않도록 제한
         bg: '#1f2937', 
         p: '1rem', 
         fontFamily: 'FiraCode-Medium, monospace', 
         fontSize: '0.875rem', 
         lineHeight: '1.5rem', 
         color: '#f9fafb',
+        WebkitOverflowScrolling: 'touch', // 모바일 터치 스크롤 최적화
         /* 스크롤바는 globals.css 설정을 따름 */
       })}>
         <code dangerouslySetInnerHTML={{ __html: highlightedHtml }} />

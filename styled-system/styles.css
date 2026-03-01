@@ -742,6 +742,34 @@
     display: none;
 }
 
+  .py_0\.375rem {
+    padding-block: 0.375rem;
+}
+
+  .ls_0\.025em {
+    letter-spacing: 0.025em;
+}
+
+  .cursor_pointer {
+    cursor: pointer;
+}
+
+  .trs_color_0\.2s {
+    transition: color 0.2s;
+}
+
+  .m_0 {
+    margin: var(--spacing-0);
+}
+
+  .bg_\#1f2937 {
+    background: #1f2937;
+}
+
+  .c_\#f9fafb {
+    color: #f9fafb;
+}
+
   .pos_fixed {
     position: fixed;
 }
@@ -774,8 +802,32 @@
     min-height: 180px;
 }
 
-  .my_1rem {
-    margin-block: 1rem;
+  .mx_-1rem {
+    margin-inline: -1rem;
+}
+
+  .bdr_0 {
+    border-radius: 0;
+}
+
+  .max-w_100\% {
+    max-width: 100%;
+}
+
+  .w_100\% {
+    width: 100%;
+}
+
+  .max-w_none {
+    max-width: none;
+}
+
+  .w_auto {
+    width: auto;
+}
+
+  .h_auto {
+    height: auto;
 }
 
   .px_0\.375rem {
@@ -798,24 +850,12 @@
     text-underline-offset: 4px;
 }
 
+  .op_0\.8 {
+    opacity: 0.8;
+}
+
   .bd-l_4px_solid_var\(--theme\) {
     border-left: 4px solid var(--theme);
-}
-
-  .py_0\.375rem {
-    padding-block: 0.375rem;
-}
-
-  .ls_0\.025em {
-    letter-spacing: 0.025em;
-}
-
-  .bg_\#1f2937 {
-    background: #1f2937;
-}
-
-  .c_\#f9fafb {
-    color: #f9fafb;
 }
 
   .bdr_22px {
@@ -929,6 +969,62 @@
     height: fit-content;
 }
 
+  .w_78px {
+    width: 78px;
+}
+
+  .h_46px {
+    height: 46px;
+}
+
+  .bg_var\(--color-bg-surface\) {
+    background: var(--color-bg-surface);
+}
+
+  .bg_\#ffffff {
+    background: #ffffff;
+}
+
+  .p_6px_8px {
+    padding: 6px 8px;
+}
+
+  .bdr_99px {
+    border-radius: 99px;
+}
+
+  .trs_background-color_0\.2s_ease {
+    transition: background-color 0.2s ease;
+}
+
+  .bg_\#3d3937 {
+    background: #3d3937;
+}
+
+  .bg_\#d9d9d9 {
+    background: #d9d9d9;
+}
+
+  .bg_\#ff8b66 {
+    background: #ff8b66;
+}
+
+  .bg_\#ff740f {
+    background: #ff740f;
+}
+
+  .w_34px {
+    width: 34px;
+}
+
+  .h_34px {
+    height: 34px;
+}
+
+  .bdr_50\% {
+    border-radius: 50%;
+}
+
   .top_0 {
     top: var(--spacing-0);
 }
@@ -1025,6 +1121,18 @@
     margin-top: 2rem;
 }
 
+  .mt_1\.25rem {
+    margin-top: 1.25rem;
+}
+
+  .ov-x_auto {
+    overflow-x: auto;
+}
+
+  .lh_1\.5rem {
+    line-height: 1.5rem;
+}
+
   .bottom_1rem {
     bottom: 1rem;
 }
@@ -1045,16 +1153,16 @@
     margin-bottom: 1rem;
 }
 
-  .fw_800 {
-    font-weight: 800;
-}
-
   .fs_0\.92em {
     font-size: 0.92em;
 }
 
   .td-c_var\(--theme\) {
     text-decoration-color: var(--theme);
+}
+
+  .fw_800 {
+    font-weight: 800;
 }
 
   .scr-mt_6rem {
@@ -1073,44 +1181,12 @@
     font-weight: 700;
 }
 
-  .pl_1\.125rem {
-    padding-left: 1.125rem;
-}
-
-  .li-t_disc {
-    list-style-type: disc;
-}
-
-  .lh_1\.6rem {
-    line-height: 1.6rem;
-}
-
-  .fs_0\.9375rem {
-    font-size: 0.9375rem;
-}
-
   .mt_0\.375rem {
     margin-top: 0.375rem;
 }
 
-  .pl_1\.25rem {
-    padding-left: 1.25rem;
-}
-
-  .li-t_decimal {
-    list-style-type: decimal;
-}
-
-  .mt_1\.25rem {
-    margin-top: 1.25rem;
-}
-
-  .ov-x_auto {
-    overflow-x: auto;
-}
-
-  .lh_1\.5rem {
-    line-height: 1.5rem;
+  .fs_0\.9375rem {
+    font-size: 0.9375rem;
 }
 
   .mt_0\.75rem {
@@ -1149,20 +1225,16 @@
     padding-left: 0.75rem;
 }
 
+  .left_0 {
+    left: var(--spacing-0);
+}
+
+  .fs_18px {
+    font-size: 18px;
+}
+
   .disabled\:op_0\.4:is(:disabled, [disabled], [data-disabled]) {
     opacity: 0.4;
-}
-
-  .\[\&_\>_li_\+_li\]\:mt_0\.375rem > li + li {
-    margin-top: 0.375rem;
-}
-
-  .\[\&_\>_li_\+_li\]\:mt_0\.25rem > li + li {
-    margin-top: 0.25rem;
-}
-
-  .\[\&_\>_li_\+_li\]\:mt_0\.5rem > li + li {
-    margin-top: 0.5rem;
 }
 
   .hover\:bg_\#ffddca:is(:hover, [data-hover]) {
@@ -1179,6 +1251,10 @@
 
   .hover\:trf_translate\(-2px\,_-2px\):is(:hover, [data-hover]) {
     transform: translate(-2px, -2px);
+}
+
+  .hover\:c_var\(--theme\):is(:hover, [data-hover]) {
+    color: var(--theme);
 }
 
   .hover\:trf_translateY\(-2px\):is(:hover, [data-hover]) {
@@ -1217,6 +1293,12 @@
     .md\:d_none {
       display: none;
 }
+    .md\:mx_0 {
+      margin-inline: var(--spacing-0);
+}
+    .md\:bdr_0\.5rem {
+      border-radius: 0.5rem;
+}
     .md\:p_1rem {
       padding: 1rem;
 }
@@ -1252,12 +1334,6 @@
 }
     .md\:fs_1\.25rem {
       font-size: 1.25rem;
-}
-    .md\:pl_1\.5rem {
-      padding-left: 1.5rem;
-}
-    .md\:lh_1\.75rem {
-      line-height: 1.75rem;
 }
     .md\:fs_1rem {
       font-size: 1rem;

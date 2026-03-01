@@ -31,7 +31,8 @@ type Block =
   | { type: 'ul'; items: ListItem[] }
   | { type: 'ol'; items: ListItem[] }
   | { type: 'blockquote'; text: string }
-  | { type: 'code'; text: string; language: string };
+  | { type: 'code'; text: string; language: string }
+  | { type: 'image'; alt: string; src: string; caption?: string };
 
 const LANGUAGE_ALIASES: Record<string, string> = {
   html: 'markup',
@@ -192,6 +193,14 @@ function parseBlocks(content: string): Block[] {
       continue;
     }
 
+    // 단독 이미지 블록 감지
+    const imageMatch = normalizedLine.match(/^!\[([^\]]*)\]\(([^\s\)]+)(?:\s+"([^"]+)")?\)$/);
+    if (imageMatch) {
+      blocks.push({ type: 'image', alt: imageMatch[1], src: imageMatch[2], caption: imageMatch[3] });
+      i += 1;
+      continue;
+    }
+
     const heading = normalizedLine.match(/^(##|###)\s+(.*)$/);
     if (heading) {
       blocks.push({ type: heading[1].length === 2 ? 'h2' : 'h3', text: heading[2].trim() });
@@ -227,6 +236,11 @@ function parseBlocks(content: string): Block[] {
       if (!normalizedNextLine || /^(##|###|```|>\s+|[-*]\s+|\d+\.\s+)/.test(normalizedNextLine)) {
         break;
       }
+      
+      // 다음 줄이 이미지라면 현재 문단을 종료 (p 안에 figure가 들어가는 것 방지)
+      if (/^!\[([^\]]*)\]\(([^\s\)]+)(?:\s+"([^"]+)")?\)$/.test(normalizedNextLine)) {
+        break;
+      }
 
       paragraphLines.push(normalizedNextLine);
       i += 1;
@@ -236,6 +250,64 @@ function parseBlocks(content: string): Block[] {
   }
 
   return blocks;
+}
+
+function renderImage(alt: string, src: string, caption?: string, key?: string | number) {
+  return (
+    <figure 
+      key={key} 
+      className={css({ 
+        my: '1.5rem', 
+        mx: { base: '-1rem', md: '0' },
+        position: 'relative',
+        borderRadius: { base: '0', md: '0.5rem' },
+        border: '1px solid var(--line)', 
+        borderLeft: { base: 'none', md: '1px solid var(--line)' },
+        borderRight: { base: 'none', md: '1px solid var(--line)' },
+        bg: 'var(--surface)', 
+        boxShadow: { base: 'none', md: '2px 2px 0 0 var(--line)' },
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        width: { base: 'calc(100% + 2rem)', md: '100%' },
+        minWidth: 0
+      })}
+    >
+      <div className={css({ 
+        overflowX: 'auto', 
+        width: '100%', 
+        WebkitOverflowScrolling: 'touch',
+        display: 'block',
+        bg: 'var(--surface)'
+      })}>
+        <img 
+          src={src} 
+          alt={alt} 
+          className={css({ 
+            display: 'block', 
+            maxW: '100%',
+            width: '100%', 
+            height: 'auto',
+            objectFit: 'contain'
+          })} 
+          loading="lazy" 
+        />
+      </div>
+      {(caption || alt) && (
+        <figcaption className={css({ 
+          borderTop: '1px solid var(--line)', 
+          bg: 'var(--theme-soft)', 
+          px: '0.75rem', 
+          py: '0.5rem', 
+          fontSize: '0.875rem', 
+          color: 'var(--muted)',
+          zIndex: 1
+        })}>
+          {caption || alt}
+        </figcaption>
+      )}
+    </figure>
+  );
 }
 
 function renderInline(text: string, keyPrefix: string = 'inline'): ReactNode[] {
@@ -248,34 +320,7 @@ function renderInline(text: string, keyPrefix: string = 'inline'): ReactNode[] {
     const imageMatch = chunk.match(/^!\[([^\]]*)\]\(([^\s\)]+)(?:\s+"([^"]+)")?\)$/);
     if (imageMatch) {
       const [, alt, src, caption] = imageMatch;
-      return (
-        <figure 
-          key={`${keyPrefix}-img-${index}`} 
-          className={css({ 
-            my: '1.5rem', 
-            mx: { base: '-1rem', md: '0' },
-            overflowX: 'auto', 
-            borderRadius: { base: '0', md: '0.5rem' }, 
-            border: '1px solid var(--line)', 
-            bg: 'var(--surface)', 
-            boxShadow: '2px 2px 0 0 var(--line)',
-            width: { base: 'calc(100% + 2rem)', md: 'auto' }
-          })}
-        >
-          <img 
-            src={src} 
-            alt={alt} 
-            className={css({ 
-              display: 'block', 
-              maxW: { base: 'none', md: 'full' }, 
-              width: { base: 'auto', md: 'full' },
-              height: 'auto' 
-            })} 
-            loading="lazy" 
-          />
-          {(caption || alt) && <figcaption className={css({ borderTop: '1px solid var(--line)', bg: 'var(--theme-soft)', px: '0.75rem', py: '0.5rem', fontSize: '0.875rem', color: 'var(--muted)' })}>{caption || alt}</figcaption>}
-        </figure>
-      );
+      return renderImage(alt, src, caption, `${keyPrefix}-img-${index}`);
     }
 
     if (/^`[^`]+`$/.test(chunk)) {
@@ -312,9 +357,11 @@ export default function PostMarkdown({ content }: Props) {
   const blocks = parseBlocks(content);
 
   return (
-    <div>
+    <div className={css({ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden', overflowWrap: 'break-word' })}>
       {blocks.map((block, index) => {
         switch (block.type) {
+          case 'image':
+            return renderImage(block.alt, block.src, block.caption, index);
           case 'h2':
             return (
               <h2 key={`${block.type}-${index}`} id={slugifyHeading(block.text)} className={css({ mt: { base: '2rem', md: '2.5rem' }, scrollMarginTop: '6rem', fontSize: { base: '1.25rem', md: '1.5rem' }, fontWeight: '800', letterSpacing: '-0.025em' })}>
@@ -389,7 +436,7 @@ export default function PostMarkdown({ content }: Props) {
                               const subOrderedMatch = child.match(/^(\d+)\.\s*(.*)$/);
                               return (
                                 <li key={childIndex}>
-                                  {renderInline(subOrderedMatch ? subOrderedMatch[2] : child, `ol-${index}-${itemIndex}-child-${childIndex}`)}
+                                  {renderInline(subOrderedMatch ? subOrderedMatch[2] : child, `ul-${index}-${itemIndex}-child-${childIndex}`)}
                                 </li>
                               );
                             })}
@@ -398,7 +445,7 @@ export default function PostMarkdown({ content }: Props) {
                           <ul>
                             {item.children.map((child, childIndex) => (
                               <li key={childIndex}>
-                                {renderInline(child, `ol-${index}-${itemIndex}-child-${childIndex}`)}
+                                {renderInline(child, `ul-${index}-${itemIndex}-child-${childIndex}`)}
                               </li>
                             ))}
                           </ul>
@@ -440,4 +487,3 @@ export default function PostMarkdown({ content }: Props) {
     </div>
   );
 }
-

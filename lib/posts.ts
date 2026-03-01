@@ -97,7 +97,16 @@ function normalizeMarkdownImagePath(rawPath: string, postSlug: string): string {
   const baseDir = slugSegments.join('/');
   const resolvedPath = path.posix.normalize(path.posix.join(baseDir, rawPath));
 
-  return `/content-assets/${resolvedPath}`;
+  // 각 경로 세그먼트를 인코딩하되, 슬래시는 유지함
+  const encodedPath = resolvedPath
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+  // Next.js static serving에서 이미 인코딩된 경로를 처리할 때 문제가 생길 수 있으므로
+  // 다시 한번 확인: 브라우저가 자동으로 디코딩해서 요청하는 경우가 있으나,
+  // [ ] 같은 문자는 URL에 직접 포함될 수 없으므로 인코딩된 상태로 전달되어야 함.
+  return `/content-assets/${encodedPath}`;
 }
 
 function normalizeContentImages(content: string, postSlug: string): string {
@@ -120,6 +129,15 @@ function parsePost(filePath: string): PostDetail {
   const frontmatter = data as FrontMatter;
   const slug = createSlug(filePath);
 
+  let thumbnail = '/images/dummy.jpg';
+  if (frontmatter.thumbnail) {
+    if (frontmatter.thumbnail.startsWith('http') || frontmatter.thumbnail.startsWith('/')) {
+      thumbnail = frontmatter.thumbnail;
+    } else {
+      thumbnail = normalizeMarkdownImagePath(frontmatter.thumbnail, slug);
+    }
+  }
+
   return {
     slug,
     title: frontmatter.title ?? path.basename(filePath, '.md'),
@@ -127,9 +145,7 @@ function parsePost(filePath: string): PostDetail {
     description: frontmatter.description ?? '',
     category: frontmatter.category ?? '미분류',
     tags: frontmatter.tag ?? [],
-    thumbnail: frontmatter.thumbnail?.startsWith('http') || frontmatter.thumbnail?.startsWith('/')
-      ? frontmatter.thumbnail
-      : '/images/dummy.jpg',
+    thumbnail,
     content: normalizeContentImages(content, slug),
   } satisfies PostDetail;
 }
@@ -170,4 +186,22 @@ export function getTagsWithCount(posts: PostSummary[]) {
 
 export function getPostsByTag(tag: string): PostSummary[] {
   return getAllPosts().filter((post) => post.tags.includes(tag));
+}
+
+export function getAdjacentPosts(slug: string): { prev: PostSummary | null; next: PostSummary | null } {
+  const allPosts = getAllPosts();
+  const currentIndex = allPosts.findIndex((post) => post.slug === slug);
+
+  if (currentIndex === -1) {
+    return { prev: null, next: null };
+  }
+
+  // allPosts는 날짜 내림차순 (최신순)으로 정렬되어 있음
+  // [최신, ..., 오래된]
+  // next: 더 최신인 글 (index - 1)
+  // prev: 더 오래된 글 (index + 1)
+  return {
+    next: currentIndex > 0 ? allPosts[currentIndex - 1] : null,
+    prev: currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null,
+  };
 }

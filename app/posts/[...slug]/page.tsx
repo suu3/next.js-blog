@@ -4,9 +4,10 @@ import { css } from '@/styled-system/css';
 import PostActions from '@/components/post-actions';
 import PostComments from '@/components/post-comments';
 import PostMarkdown from '@/components/post-markdown';
+import PostNavigation from '@/components/post-navigation';
 import PostToc from '@/components/post-toc';
 import { extractHeadings } from '@/lib/markdown';
-import { getAllPosts, getPostBySlug } from '@/lib/posts';
+import { getAllPosts, getPostBySlug, getAdjacentPosts } from '@/lib/posts';
 
 type Props = {
   params: Promise<{ slug: string[] }>;
@@ -28,10 +29,11 @@ export default async function PostDetailPage({ params }: Props) {
   }
 
   const headings = extractHeadings(post.content);
+  const { prev, next } = getAdjacentPosts(slug);
 
   return (
     <section className={css({ display: 'grid', gap: '1.5rem', gridTemplateColumns: { base: '1fr', lg: 'minmax(0,1fr) 260px' } })}>
-      <article className={css({ borderRadius: '0.75rem', border: '1px solid var(--line)', bg: 'var(--surface)', p: { base: '1rem', md: '2rem' }, boxShadow: '4px 4px 0 0 var(--line)' })}>
+      <article className={css({ borderRadius: '0.75rem', border: '1px solid var(--line)', bg: 'var(--surface)', p: { base: '1rem', md: '2rem' }, boxShadow: '4px 4px 0 0 var(--line)', minWidth: 0, maxWidth: '100%', overflow: 'hidden' })}>
         <p className={css({ mb: '0.75rem', display: 'inline-block', borderRadius: '0.375rem', bg: 'var(--theme-soft)', px: '0.5rem', py: '0.25rem', fontFamily: 'FiraCode-Medium, monospace', fontSize: '0.75rem' })}>{post.category}</p>
         <h1 className={css({ fontSize: { base: '1.5rem', md: '1.875rem' }, fontWeight: '900', letterSpacing: '-0.025em' })}>{post.title}</h1>
         <p className={css({ mt: '0.5rem', fontSize: '0.875rem', color: 'var(--muted)' })}>{post.date}</p>
@@ -57,6 +59,10 @@ export default async function PostDetailPage({ params }: Props) {
           <PostMarkdown content={post.content} />
         </div>
 
+        <PostComments issueTerm={post.slug} />
+
+        <PostNavigation prev={prev} next={next} />
+
         <Link
           href="/"
           prefetch={false}
@@ -64,8 +70,6 @@ export default async function PostDetailPage({ params }: Props) {
         >
           ← 목록으로
         </Link>
-
-        <PostComments issueTerm={post.slug} />
       </article>
 
       <div className={css({ display: { base: 'none', lg: 'block' } })}>
