@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+﻿import type { Metadata } from "next";
+import Link from "next/link";
 import { css } from "@/styled-system/css";
 import { getAllPosts } from "@/lib/posts";
 import { splitSlugToSegments } from "@/lib/slug";
@@ -12,6 +13,22 @@ export async function generateStaticParams() {
 	return categories.map((category) => ({
 		category: encodeURIComponent(category),
 	}));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { category: categoryParam } = await params;
+	const category = decodeURIComponent(categoryParam);
+
+	return {
+		title: `${category} 카테고리`,
+		description: `Suu.Blog의 ${category} 카테고리 포스트 목록입니다.`,
+		openGraph: {
+			title: `${category} 카테고리`,
+			description: `Suu.Blog의 ${category} 카테고리 포스트 목록입니다.`,
+			type: "website",
+			url: `https://suu3.github.io/category/${encodeURIComponent(category)}`,
+		},
+	};
 }
 
 export default async function CategoryDetailPage({ params }: Props) {

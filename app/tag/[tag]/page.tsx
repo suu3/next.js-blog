@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+﻿import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { css } from "@/styled-system/css";
 import { getAllPosts, getPostsByTag } from "@/lib/posts";
@@ -15,6 +16,22 @@ export async function generateStaticParams() {
 	});
 
 	return [...tags].map((tag) => ({ tag: encodeURIComponent(tag) }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { tag } = await params;
+	const decodedTag = decodeURIComponent(tag);
+
+	return {
+		title: `#${decodedTag} 태그`,
+		description: `Suu.Blog의 #${decodedTag} 태그가 포함된 포스트 목록입니다.`,
+		openGraph: {
+			title: `#${decodedTag} 태그`,
+			description: `Suu.Blog의 #${decodedTag} 태그가 포함된 포스트 목록입니다.`,
+			type: "website",
+			url: `https://suu3.github.io/tag/${encodeURIComponent(decodedTag)}`,
+		},
+	};
 }
 
 export default async function TagDetailPage({ params }: Props) {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { css } from "@/styled-system/css";
@@ -17,6 +18,41 @@ export async function generateStaticParams() {
 	return getAllPosts().map((post) => ({
 		slug: post.slug.split("/").map(encodeURIComponent),
 	}));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { slug: slugSegments } = await params;
+	const slug = slugSegments.map(decodeURIComponent).join("/");
+	const post = getPostBySlug(slug);
+
+	if (!post) {
+		return {
+			title: "Post Not Found",
+		};
+	}
+
+	return {
+		title: post.title,
+		description: post.description,
+		openGraph: {
+			title: post.title,
+			description: post.description,
+			type: "article",
+			publishedTime: new Date(post.date).toISOString(),
+			tags: post.tags,
+			images: [
+				{
+					url: post.thumbnail,
+				},
+			],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: post.title,
+			description: post.description,
+			images: [post.thumbnail],
+		},
+	};
 }
 
 export default async function PostDetailPage({ params }: Props) {

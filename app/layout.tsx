@@ -12,8 +12,36 @@ import "prismjs/themes/prism-tomorrow.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "Suu.Blog",
+	title: {
+		default: "Suu.Blog",
+		template: "%s | Suu.Blog",
+	},
 	description: "Suu3 기술 블로그",
+	keywords: ["개발", "프론트엔드", "React", "Next.js", "블로그", "기술"],
+	authors: [{ name: "Suu3", url: "https://github.com/suu3" }],
+	creator: "Suu3",
+	openGraph: {
+		type: "website",
+		locale: "ko_KR",
+		url: "https://suu3.github.io",
+		title: "Suu.Blog",
+		description: "Suu3 기술 블로그",
+		siteName: "Suu.Blog",
+		images: [
+			{
+				url: "/favicons/favicon-512x512.png",
+				width: 512,
+				height: 512,
+				alt: "Suu.Blog Image",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "Suu.Blog",
+		description: "Suu3 기술 블로그",
+		images: ["/favicons/favicon-512x512.png"],
+	},
 	metadataBase: new URL("https://suu3.github.io"),
 	manifest: "/site.webmanifest",
 	icons: {
