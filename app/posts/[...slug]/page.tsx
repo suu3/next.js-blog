@@ -16,7 +16,7 @@ type Props = {
 
 export async function generateStaticParams() {
 	return getAllPosts().map((post) => ({
-		slug: post.slug.split("/").map(encodeURIComponent),
+		slug: post.slug.split("/"),
 	}));
 }
 

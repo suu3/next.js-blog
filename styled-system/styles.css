@@ -597,8 +597,56 @@
     color: var(--text);
 }
 
+  .min-h_60vh {
+    min-height: 60vh;
+}
+
+  .ta_center {
+    text-align: center;
+}
+
   .gap_1\.5rem {
     gap: 1.5rem;
+}
+
+  .c_var\(--theme\) {
+    color: var(--theme);
+}
+
+  .max-w_24rem {
+    max-width: 24rem;
+}
+
+  .bdr_9999px {
+    border-radius: 9999px;
+}
+
+  .bd_2px_solid_var\(--line\) {
+    border: 2px solid var(--line);
+}
+
+  .bg_var\(--theme\) {
+    background: var(--theme);
+}
+
+  .c_white {
+    color: var(--colors-white);
+}
+
+  .px_1\.5rem {
+    padding-inline: 1.5rem;
+}
+
+  .py_0\.75rem {
+    padding-block: 0.75rem;
+}
+
+  .bx-sh_4px_4px_0_0_var\(--line\) {
+    box-shadow: 4px 4px 0 0 var(--line);
+}
+
+  .trs_all_0\.15s_ease {
+    transition: all 0.15s ease;
 }
 
   .gap_1rem {
@@ -611,18 +659,6 @@
 
   .bdr_0\.75rem {
     border-radius: 0.75rem;
-}
-
-  .bd_2px_solid_var\(--line\) {
-    border: 2px solid var(--line);
-}
-
-  .py_0\.75rem {
-    padding-block: 0.75rem;
-}
-
-  .trs_all_0\.15s_ease {
-    transition: all 0.15s ease;
 }
 
   .bd_1px_solid_var\(--line\) {
@@ -659,10 +695,6 @@
 
   .p_1rem {
     padding: 1rem;
-}
-
-  .bx-sh_4px_4px_0_0_var\(--line\) {
-    box-shadow: 4px 4px 0 0 var(--line);
 }
 
   .max-w_100\% {
@@ -733,10 +765,6 @@
     object-fit: cover;
 }
 
-  .c_var\(--theme\) {
-    color: var(--theme);
-}
-
   .w_64 {
     width: var(--sizes-64);
 }
@@ -795,10 +823,6 @@
 
   .z_30 {
     z-index: 30;
-}
-
-  .bdr_9999px {
-    border-radius: 9999px;
 }
 
   .bx-sh_2px_2px_0_0_var\(--line\) {
@@ -949,14 +973,6 @@
     background: rgba(0, 0, 0, 0.35);
 }
 
-  .ta_center {
-    text-align: center;
-}
-
-  .c_white {
-    color: var(--colors-white);
-}
-
   .lc_2 {
     overflow: hidden;
     display: -webkit-box;
@@ -974,10 +990,6 @@
 
   .w_1\.75rem {
     width: 1.75rem;
-}
-
-  .bg_var\(--theme\) {
-    background: var(--theme);
 }
 
   .w_16 {
@@ -1044,6 +1056,30 @@
     font-weight: 600;
 }
 
+  .fs_4rem {
+    font-size: 4rem;
+}
+
+  .lh_1 {
+    line-height: 1;
+}
+
+  .fs_1\.5rem {
+    font-size: 1.5rem;
+}
+
+  .fw_700 {
+    font-weight: 700;
+}
+
+  .lh_1\.6 {
+    line-height: 1.6;
+}
+
+  .mt_1\.5rem {
+    margin-top: 1.5rem;
+}
+
   .fs_1\.875rem {
     font-size: 1.875rem;
 }
@@ -1066,10 +1102,6 @@
 
   .mb_0\.75rem {
     margin-bottom: 0.75rem;
-}
-
-  .fs_1\.5rem {
-    font-size: 1.5rem;
 }
 
   .mt_0\.5rem {
@@ -1098,10 +1130,6 @@
 
   .mt_2rem {
     margin-top: 2rem;
-}
-
-  .fw_700 {
-    font-weight: 700;
 }
 
   .mt_1\.25rem {
@@ -1150,10 +1178,6 @@
 
   .scr-mt_6rem {
     scroll-margin-top: 6rem;
-}
-
-  .mt_1\.5rem {
-    margin-top: 1.5rem;
 }
 
   .fs_1\.125rem {
@@ -1240,16 +1264,24 @@
     opacity: 0.4;
 }
 
+  .hover\:trf_translate\(-2px\,_-2px\):is(:hover, [data-hover]) {
+    transform: translate(-2px, -2px);
+}
+
+  .hover\:bx-sh_6px_6px_0_0_var\(--line\):is(:hover, [data-hover]) {
+    box-shadow: 6px 6px 0 0 var(--line);
+}
+
   .hover\:bg_var\(--theme-soft\):is(:hover, [data-hover]) {
     background: var(--theme-soft);
 }
 
-  .hover\:bx-sh_4px_4px_0_0_var\(--line\):is(:hover, [data-hover]) {
-    box-shadow: 4px 4px 0 0 var(--line);
+  .hover\:c_var\(--foreground\):is(:hover, [data-hover]) {
+    color: var(--foreground);
 }
 
-  .hover\:trf_translate\(-2px\,_-2px\):is(:hover, [data-hover]) {
-    transform: translate(-2px, -2px);
+  .hover\:bx-sh_4px_4px_0_0_var\(--line\):is(:hover, [data-hover]) {
+    box-shadow: 4px 4px 0 0 var(--line);
 }
 
   .hover\:c_var\(--theme\):is(:hover, [data-hover]) {
@@ -1274,6 +1306,14 @@
 
   .hover\:bd-c_var\(--line\):is(:hover, [data-hover]) {
     border-color: var(--line);
+}
+
+  .active\:trf_translate\(2px\,_2px\):is(:active, [data-active]) {
+    transform: translate(2px, 2px);
+}
+
+  .active\:bx-sh_0px_0px_0_0_var\(--line\):is(:active, [data-active]) {
+    box-shadow: 0px 0px 0 0 var(--line);
 }
 
   @media screen and (min-width: 40rem) {
@@ -1330,6 +1370,12 @@
 }
     .md\:w_21rem {
       width: 21rem;
+}
+    .md\:fs_6rem {
+      font-size: 6rem;
+}
+    .md\:fs_2rem {
+      font-size: 2rem;
 }
     .md\:grid-tc_repeat\(2\,_minmax\(0\,_1fr\)\) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
