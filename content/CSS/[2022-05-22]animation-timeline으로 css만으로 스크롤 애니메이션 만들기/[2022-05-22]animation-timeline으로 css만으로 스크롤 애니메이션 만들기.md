@@ -7,13 +7,15 @@ category: "CSS"
 thumbnail: ./1.png
 ---
 
+> ⚠️ 이 글에서 사용한 `@scroll-timeline` at-rule과 `time-range` 속성은 현재 W3C 스펙에서 폐기(deprecated) 되었다. 지금은 `scroll()`, `view()` 함수 기반의 새로운 문법으로 대체되었고, Chrome 115+, Firefox 110+, Safari 18+ 에서 `animation-timeline`이 기본 지원되고 있다. 아래 코드는 더 이상 동작하지 않을 수 있으니 참고만 하자.
+
 ## 개요
 
 예전에 동아리에서 CSS 애니메이션이 가득한 사이트를 클론 코딩하는 과제를 받았던 적이 있다.
 
 당시에 스크롤을 내리면서 나타나는 애니메이션을 보며 이것도 JS 없이 CSS로 할 수 있는 건가?(아무래도... js없이 css로 애니메이션을 만드는게 성능에 더 좋으니깐.) 궁금했었는데, 스택오버플로우에서 찾아보니 단호하게 방법이 없다는 글만 나왔던 기억이 있다.
 
-그러다 [**`animation-timeline`**](https://developer.mozilla.org/en-US/docs/Web/API/AnimationTimeline)이라는 Web Animations API를 알게 됐다.
+그러다 [**`animation-timeline`**](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline)이라는 CSS 속성을 알게 됐다.
 어쩐지 한글 문서는 잘 안 나오더라니 크롬 experimental 기술이었다.
 chrome experiments는 크롬에서 최신 웹 기술을 선보이는 것이라고 한다.
 
@@ -91,6 +93,8 @@ https://codepen.io/suu3/pen/azoZLEe
 지원되는 브라우저에서만 확인해 볼 수 있다.
 
 translateY 값을 다르게 줘서 속도에 차이를 줬다. 두 h1이 같은 크기지만 first-header가 먼저 border를 침범하게 된다.
+
+참고로 위 코드에서 first-header의 `animation-duration`은 `3s`인데 `time-range`는 `1s`로 불일치하고 있다. 앞서 소개한 TIP에서는 둘을 일치시키라고 했으니 유의하자.
 
 ## Reference
 

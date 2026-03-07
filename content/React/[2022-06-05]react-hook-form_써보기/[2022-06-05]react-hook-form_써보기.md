@@ -63,7 +63,7 @@ return(
 
 폼 태그가 Submit 될 때 호출될 함수를 handleSubmit에 콜백으로 넣어준다.
 
-- e.preventDefault() 하지 않아도 유효성을 통과하지 못하면 제출되지 않는다.
+- handleSubmit이 내부적으로 e.preventDefault()를 호출해주기 때문에 직접 호출할 필요가 없다. 유효성을 통과하지 못하면 onSubmit 콜백이 실행되지 않는다.
 - [reset](https://react-hook-form.com/kr/api#reset)은 폼을 초기화 시켜준다.
   - 특정 필드만 초기화시켜줄 수 있고, 특정 값으로 초기화시켜주는 등 다양한 작업이 가능하다.
 
@@ -96,7 +96,7 @@ const CustomInput = ({ type, label, eLabel, register, confirm }) => {
         {...register(`${eLabel}`, confirm)}
         type={type}
         className={styles.input}
-        autoComplete="false"
+        autoComplete="off"
       />
     </div>
   );

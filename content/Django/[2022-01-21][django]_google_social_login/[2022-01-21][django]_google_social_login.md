@@ -187,5 +187,5 @@ urlpatterns = [
 
 login app -> social namespace -> begin
 
-begin은 신경 쓸 필요 없으나 위에서 app 이름과 nampspace를 어떻게 적어줬는지 주의해서 작성하자.
+begin은 신경 쓸 필요 없으나 위에서 app 이름과 namespace를 어떻게 적어줬는지 주의해서 작성하자.
 여기서도 마찬가지로 리다이렉션 시 **Error: redirect_uri_mismatch** 가 뜬다면 **redirect URI in request**~ 에 나온 주소를 0번의 **승인된 리다이렉션 URI**에 추가한다.
