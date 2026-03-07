@@ -44,12 +44,12 @@ export default function CodeBlock({ language, code, highlightedHtml }: Props) {
         margin: 0, 
         overflowX: 'auto', 
         maxWidth: '100%', // 컨테이너 너비를 넘지 않도록 제한
-        bg: '#1f2937', 
+        bg: 'var(--code-background)', 
         p: '1rem', 
         fontFamily: 'FiraCode-Medium, monospace', 
         fontSize: '0.875rem', 
         lineHeight: '1.5rem', 
-        color: '#f9fafb',
+        color: 'var(--code-color)',
         WebkitOverflowScrolling: 'touch', // 모바일 터치 스크롤 최적화
         /* 스크롤바는 globals.css 설정을 따름 */
       })}>

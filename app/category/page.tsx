@@ -14,10 +14,10 @@ export default function CategoryPage() {
           <li key={category}>
             <Link
               href={`/category/${encodeURIComponent(category)}`}
-              className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '0.75rem', border: '1px solid #2a2b31', bg: 'white', px: '1rem', py: '0.75rem', transition: 'all 0.15s ease', _hover: { bg: '#ffddca', boxShadow: '4px 4px 0 0 #2a2b31' } })}
+              className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '0.75rem', border: '2px solid var(--line)', bg: 'var(--surface)', px: '1rem', py: '0.75rem', transition: 'all 0.15s ease', _hover: { bg: 'var(--theme-soft)', boxShadow: '4px 4px 0 0 var(--line)' } })}
             >
               <span className={css({ fontWeight: '600' })}>{category}</span>
-              <span className={css({ fontFamily: 'FiraCode-Medium, monospace', fontSize: '0.875rem', color: '#6b7280' })}>{count}</span>
+              <span className={css({ fontFamily: 'FiraCode-Medium, monospace', fontSize: '0.875rem', color: 'var(--muted)' })}>{count}</span>
             </Link>
           </li>
         ))}
@@ -25,4 +25,3 @@ export default function CategoryPage() {
     </section>
   );
 }
-

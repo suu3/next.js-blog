@@ -20,24 +20,23 @@ export default async function CategoryDetailPage({ params }: Props) {
   return (
     <section className={css({ display: 'flex', flexDir: 'column', gap: '1rem' })}>
       <h1 className={css({ fontSize: '1.875rem', fontWeight: '900', letterSpacing: '-0.025em' })}>{category}</h1>
-      <p className={css({ fontSize: '0.875rem', color: '#6b7280' })}>{posts.length}개의 포스트</p>
+      <p className={css({ fontSize: '0.875rem', color: 'var(--muted)' })}>{posts.length}개의 포스트</p>
       <ul className={css({ display: 'flex', flexDir: 'column', gap: '0.5rem' })}>
         {posts.map((post) => (
           <li key={post.slug}>
             <Link
               href={`/posts/${splitSlugToSegments(post.slug).join('/')}`}
-              className={css({ display: 'block', borderRadius: '0.5rem', border: '1px solid #2a2b31', bg: 'white', px: '1rem', py: '0.75rem', _hover: { bg: '#ffddca' } })}
+              className={css({ display: 'block', borderRadius: '0.5rem', border: '2px solid var(--line)', bg: 'var(--surface)', px: '1rem', py: '0.75rem', transition: 'all 0.15s ease', _hover: { bg: 'var(--theme-soft)', boxShadow: '4px 4px 0 0 var(--line)' } })}
             >
               <p className={css({ fontWeight: '600' })}>{post.title}</p>
-              <p className={css({ mt: '0.25rem', fontSize: '0.875rem', color: '#6b7280' })}>{post.date}</p>
+              <p className={css({ mt: '0.25rem', fontSize: '0.875rem', color: 'var(--muted)' })}>{post.date}</p>
             </Link>
           </li>
         ))}
       </ul>
-      <Link href="/category" className={css({ display: 'inline-block', w: 'fit-content', borderRadius: '0.25rem', border: '1px solid #2a2b31', px: '0.75rem', py: '0.5rem', fontSize: '0.875rem', _hover: { bg: '#ffddca' } })}>
+      <Link href="/category" className={css({ display: 'inline-block', w: 'fit-content', borderRadius: '0.25rem', border: '2px solid var(--line)', bg: 'var(--surface)', px: '0.75rem', py: '0.5rem', fontSize: '0.875rem', transition: 'all 0.15s ease', _hover: { bg: 'var(--theme-soft)', boxShadow: '4px 4px 0 0 var(--line)' } })}>
         ← 카테고리 목록
       </Link>
     </section>
   );
 }
-

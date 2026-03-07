@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { css, cx } from '@/styled-system/css';
+import BioCard from '@/components/bio-card';
 import type { PostSummary } from '@/lib/posts';
 import { splitSlugToSegments } from '@/lib/slug';
 
@@ -34,6 +35,13 @@ export default function PostSearch({ posts }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedTag, setSelectedTag] = useState<string>('All');
   const [page, setPage] = useState(1);
+
+  const resetFilters = () => {
+    setQuery('');
+    setSelectedCategory('All');
+    setSelectedTag('All');
+    setPage(1);
+  };
 
   const categoryCounts = useMemo(() => {
     const counts = posts.reduce<Record<string, number>>((acc, post) => {
@@ -110,6 +118,29 @@ export default function PostSearch({ posts }: Props) {
         <div className={css({ display: 'flex', flexDir: { base: 'column', md: 'row' }, gap: '0.75rem', alignItems: { md: 'center' }, justifyContent: { md: 'space-between' } })}>
           <h2 className={css({ fontSize: '1.125rem', fontWeight: '900', letterSpacing: '-0.025em' })}>Latest</h2>
           <div className={css({ display: 'flex', w: 'full', flexDir: { base: 'column', md: 'row' }, gap: '0.5rem', alignItems: { md: 'center' }, width: { md: 'auto' } })}>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className={css({
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.375rem',
+                borderRadius: '9999px',
+                border: '2px solid var(--line)',
+                bg: 'var(--surface)',
+                px: '0.875rem',
+                py: '0.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '700',
+                transition: 'all 0.15s ease',
+                _hover: { bg: 'var(--theme-soft)', boxShadow: '3px 3px 0 0 var(--line)' },
+              })}
+              aria-label="홈 상태로 필터 초기화"
+            >
+              <Image src="/images/home.svg" alt="" width={16} height={16} aria-hidden />
+              <span>Home</span>
+            </button>
             <input
               id="post-search"
               type="search"
@@ -128,17 +159,6 @@ export default function PostSearch({ posts }: Props) {
 
       <div className={css({ mt: '1rem', display: 'grid', gap: '1rem', gridTemplateColumns: { base: '1fr', md: '220px minmax(0, 1fr)' } })}>
         <aside className={css({ display: 'flex', flexDir: 'column', gap: '0.75rem' })}>
-          <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', p: '0.75rem' })}>
-            <div className={css({ display: 'flex', alignItems: 'center', gap: '0.5rem' })}>
-              <Image src="/images/icon.png" alt="profile icon" width={28} height={28} className={css({ h: '1.75rem', w: '1.75rem' })} />
-              <div>
-                <p className={css({ fontSize: '0.75rem', color: 'var(--muted)' })}>@Suu3</p>
-                <p className={css({ fontSize: '0.875rem', fontWeight: '700', color: 'var(--theme)' })}>Developer</p>
-              </div>
-            </div>
-            <p className={css({ mt: '0.75rem', fontSize: '0.75rem', color: 'var(--muted)' })}>Your doing great, keep practicing.</p>
-          </div>
-
           <div className={css({ borderRadius: '1rem', border: '2px solid var(--line)', bg: 'var(--surface)', p: '0.75rem' })}>
             <p className={css({ mb: '0.5rem', fontSize: '0.875rem', fontWeight: '900' })}>Category</p>
             <ul className={css({ display: 'flex', flexDir: 'column', gap: '0.25rem', fontSize: '0.875rem' })}>

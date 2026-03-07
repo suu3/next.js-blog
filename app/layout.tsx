@@ -43,8 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               top: 0,
               zIndex: 20,
               borderBottom: '1px solid var(--line)',
-              background: 'color-mix(in srgb, var(--surface) 95%, transparent)',
-              backdropFilter: 'blur(8px)',
+              background: 'var(--theme-soft)',
             })}
           >
             <div
@@ -98,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 })}
               >
                 <p className={css({ fontWeight: '600', color: 'var(--text)' })}>@Suu3</p>
-                <p>ⓒ 2024, Built with Gatsby</p>
+                <p>ⓒ 2026, Built with Next.js</p>
               </div>
             </footer>
           </div>
@@ -107,4 +106,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-
