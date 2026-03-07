@@ -72,9 +72,13 @@ export default async function PostDetailPage({ params }: Props) {
 			className={css({
 				display: "grid",
 				gap: "1.5rem",
-				gridTemplateColumns: { base: "1fr", lg: "minmax(0,1fr) 260px" },
+				gridTemplateColumns: { base: "1fr", lg: "260px minmax(0,1fr)" },
 			})}
 		>
+			<div className={css({ display: { base: "none", lg: "block" } })}>
+				<PostToc items={headings} />
+			</div>
+
 			<article
 				className={css({
 					borderRadius: "0.75rem",
@@ -195,10 +199,6 @@ export default async function PostDetailPage({ params }: Props) {
 					← 목록으로
 				</Link>
 			</article>
-
-			<div className={css({ display: { base: "none", lg: "block" } })}>
-				<PostToc items={headings} />
-			</div>
 		</section>
 	);
 }

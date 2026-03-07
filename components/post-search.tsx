@@ -128,6 +128,9 @@ export default function PostSearch({ posts }: Props) {
 					<button
 						type="button"
 						onClick={resetFilters}
+						disabled={
+							query === "" && selectedCategory === "All" && selectedTag === "All"
+						}
 						className={css({
 							position: "absolute",
 							zIndex: 10,
@@ -145,6 +148,13 @@ export default function PostSearch({ posts }: Props) {
 							fontSize: "0.875rem",
 							fontWeight: "700",
 							transition: "all 0.15s ease",
+							cursor: "pointer",
+							_disabled: {
+								opacity: 0.4,
+								cursor: "not-allowed",
+								filter: "grayscale(100%)",
+								pointerEvents: "none",
+							},
 							_hover: {
 								bg: "var(--theme-soft)",
 								boxShadow: "3px 3px 0 0 var(--line)",
