@@ -220,9 +220,7 @@
 main {
 	flex: 1;
 }
-.neo-frame {
-	box-shadow: 3px 3px 0 var(--line);
-}
+
 .y2k-logo {
 	font-family: var(--y2k-display);
 	letter-spacing: -0.025em;
@@ -318,7 +316,6 @@ main {
 		border: 2px solid var(--line);
 		border-radius: 1rem;
 		background: var(--surface);
-		box-shadow: 3px 3px 0 var(--line);
 		opacity: 0;
 		pointer-events: none;
 		transform: translateY(-4px);

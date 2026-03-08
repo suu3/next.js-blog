@@ -1264,6 +1264,18 @@
     opacity: 0.4;
 }
 
+  .disabled\:cursor_not-allowed:is(:disabled, [disabled], [data-disabled]) {
+    cursor: not-allowed;
+}
+
+  .disabled\:filter_grayscale\(100\%\):is(:disabled, [disabled], [data-disabled]) {
+    filter: grayscale(100%);
+}
+
+  .disabled\:pointer-events_none:is(:disabled, [disabled], [data-disabled]) {
+    pointer-events: none;
+}
+
   .hover\:trf_translate\(-2px\,_-2px\):is(:hover, [data-hover]) {
     transform: translate(-2px, -2px);
 }
@@ -1431,8 +1443,8 @@
     .lg\:d_block {
       display: block;
 }
-    .lg\:grid-tc_minmax\(0\,1fr\)_260px {
-      grid-template-columns: minmax(0,1fr) 260px;
+    .lg\:grid-tc_260px_minmax\(0\,1fr\) {
+      grid-template-columns: 260px minmax(0,1fr);
 }
     .lg\:grid-tc_repeat\(3\,_minmax\(0\,_1fr\)\) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
