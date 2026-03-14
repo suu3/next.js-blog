@@ -1,7 +1,7 @@
 ---
-title: "animation-timeline으로 css만으로 스크롤 애니메이션 만들기"
+title: "animation-timeline을 사용하여 css만으로 스크롤 애니메이션 만들기"
 date: "2022-05-22"
-description: "animation-timeline으로 css만으로 스크롤 애니메이션 만들기"
+description: "animation-timeline을 사용하여 css만으로 스크롤 애니메이션 만들기"
 tag: ["CSS"]
 category: "CSS"
 thumbnail: ./1.png
