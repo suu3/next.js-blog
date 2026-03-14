@@ -123,16 +123,6 @@ export default async function PostDetailPage({ params }: Props) {
 				>
 					{post.date}
 				</p>
-				<p
-					className={css({
-						mt: "1rem",
-						fontSize: { base: "1rem", md: "1.125rem" },
-						lineHeight: { base: "1.75rem", md: "2rem" },
-						color: "var(--muted)",
-					})}
-				>
-					{post.description}
-				</p>
 
 				<PostActions />
 

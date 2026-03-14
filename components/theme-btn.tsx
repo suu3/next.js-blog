@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
+import { css } from "@/styled-system/css";
 import styles from "./theme-btn.module.css";
 
 export default function ThemeBtn() {
@@ -15,7 +16,7 @@ export default function ThemeBtn() {
 	}, []);
 
 	if (!mounted) {
-		return <div style={{ width: 78, height: 46 }} aria-hidden />;
+		return <div className={css({ width: "78px", height: "46px" })} aria-hidden />;
 	}
 
 	const currentTheme = theme === "system" ? resolvedTheme : theme;
@@ -58,7 +59,6 @@ export default function ThemeBtn() {
 					animate={{ x: isDark ? 30 : 0 }}
 					transition={spring}
 					className={styles.btn}
-					style={{ backgroundColor: isDark ? "#ff8b66" : "#ff740f" }}
 				>
 					<Image
 						src={isDark ? "/images/moon.svg" : "/images/sun.svg"}
