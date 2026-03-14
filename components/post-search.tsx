@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { css, cx } from "@/styled-system/css";
+import { getAccentBadgeClass } from "@/components/accent-badge";
 import BioCard from "@/components/bio-card";
 import type { PostSummary } from "@/lib/posts";
 import { splitSlugToSegments } from "@/lib/slug";
@@ -73,6 +74,11 @@ export default function PostSearch({ posts }: Props) {
 				.map(([name, count]) => ({ name, count })),
 		];
 	}, [posts]);
+
+	const categoryLabels = useMemo(
+		() => Array.from(new Set(posts.map((post) => post.category))),
+		[posts],
+	);
 
 	const filtered = useMemo(() => {
 		const normalized = query.trim().toLowerCase();
@@ -459,9 +465,14 @@ export default function PostSearch({ posts }: Props) {
 													borderRadius: "0.75rem",
 													border: "2px solid var(--line)",
 												})}
-											>
+												>
+												{(() => {
+													const isDummyThumbnail =
+														post.thumbnail === "/images/dummy.png";
+
+													return (
 												<Image
-													src={post.thumbnail || "/images/dummy.jpg"}
+													src={post.thumbnail || "/images/dummy.png"}
 													alt={post.title}
 													width={320}
 													height={180}
@@ -470,7 +481,10 @@ export default function PostSearch({ posts }: Props) {
 														css({
 															h: "8rem",
 															w: "full",
-															objectFit: "cover",
+															objectFit: isDummyThumbnail ? "contain" : "cover",
+															bg: isDummyThumbnail
+																? "var(--surface-soft)"
+																: "transparent",
 															transition: "transform 0.2s ease",
 														}),
 														css({
@@ -480,6 +494,8 @@ export default function PostSearch({ posts }: Props) {
 														}),
 													)}
 												/>
+													);
+												})()}
 												<div
 													className={css({
 														position: "absolute",
@@ -488,23 +504,26 @@ export default function PostSearch({ posts }: Props) {
 													})}
 												/>
 
-												{post.tags[0] ? (
+												{post.category ? (
 													<p
-														className={css({
+														className={cx(
+															css({
 															position: "absolute",
 															left: "0.5rem",
 															top: "0.5rem",
 															zIndex: 10,
 															borderRadius: "0.25rem",
 															border: "1px solid var(--line)",
-															bg: "var(--theme-soft)",
 															px: "0.5rem",
 															py: "0.125rem",
 															fontFamily: "FiraCode-Medium, monospace",
+															fontWeight: "700",
 															fontSize: "10px",
-														})}
+															}),
+															getAccentBadgeClass(post.category, categoryLabels),
+														)}
 													>
-														#{post.tags[0]}
+														{post.category}
 													</p>
 												) : null}
 

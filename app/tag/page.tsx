@@ -45,7 +45,18 @@ export default function TagPage() {
 								_hover: { bg: "var(--theme-soft)" },
 							})}
 						>
-							<span className={css({ fontWeight: "600" })}>#{tag}</span>
+							<span
+								className={css({
+									borderRadius: "0.375rem",
+									border: "1px solid var(--line)",
+									bg: "var(--surface)",
+									px: "0.5rem",
+									py: "0.25rem",
+									fontWeight: "700",
+								})}
+							>
+								#{tag}
+							</span>
 							<span
 								className={css({
 									fontFamily: "FiraCode-Medium, monospace",

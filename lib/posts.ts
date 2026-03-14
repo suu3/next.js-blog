@@ -139,7 +139,7 @@ function parsePost(filePath: string): PostDetail {
 	const frontmatter = data as FrontMatter;
 	const slug = createSlug(filePath);
 
-	let thumbnail = "/images/dummy.jpg";
+	let thumbnail = "/images/dummy.png";
 	if (frontmatter.thumbnail) {
 		if (
 			frontmatter.thumbnail.startsWith("http") ||

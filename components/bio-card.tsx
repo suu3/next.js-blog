@@ -83,7 +83,7 @@ export default function BioCard({ compact = false, rightElement }: Props) {
 					color: "var(--muted)",
 				})}
 			>
-				그림과 음악이 좋은 프론트엔드 개발자
+				그림과 락 음악이 좋은 프론트엔드 개발자
 			</p>
 		</div>
 	);

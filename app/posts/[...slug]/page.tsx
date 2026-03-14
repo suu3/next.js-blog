@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 import PostActions from "@/components/post-actions";
 import PostComments from "@/components/post-comments";
 import PostMarkdown from "@/components/post-markdown";
 import PostNavigation from "@/components/post-navigation";
 import PostToc from "@/components/post-toc";
+import { getAccentBadgeClass } from "@/components/accent-badge";
 import { extractHeadings } from "@/lib/markdown";
 import { getAllPosts, getPostBySlug, getAdjacentPosts } from "@/lib/posts";
 
@@ -56,6 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PostDetailPage({ params }: Props) {
+	const allCategories = Array.from(new Set(getAllPosts().map((item) => item.category)));
 	const { slug: slugSegments } = await params;
 	const slug = slugSegments.map(decodeURIComponent).join("/");
 	const post = getPostBySlug(slug);
@@ -92,16 +94,20 @@ export default async function PostDetailPage({ params }: Props) {
 				})}
 			>
 				<p
-					className={css({
-						mb: "0.75rem",
-						display: "inline-block",
-						borderRadius: "0.375rem",
-						bg: "var(--theme-soft)",
-						px: "0.5rem",
-						py: "0.25rem",
-						fontFamily: "FiraCode-Medium, monospace",
+					className={cx(
+						css({
+							mb: "0.75rem",
+							display: "inline-block",
+							borderRadius: "0.375rem",
+							border: "1px solid var(--line)",
+							px: "0.5rem",
+							py: "0.25rem",
+							fontFamily: "FiraCode-Medium, monospace",
+						fontWeight: "700",
 						fontSize: "0.75rem",
-					})}
+					}),
+						getAccentBadgeClass(post.category, allCategories),
+					)}
 				>
 					{post.category}
 				</p>

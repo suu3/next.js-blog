@@ -301,8 +301,8 @@ main {
 }
 
 .neo-gnb-link.is-active {
-	background: var(--theme-soft);
-	color: var(--text);
+	background: var(--theme);
+	color: #fff;
 }
 
 @media (max-width: 767px) {
