@@ -22,8 +22,9 @@ export default function ThemeBtn() {
 	const isDark = currentTheme === "dark";
 	const spring = {
 		type: "spring",
-		stiffness: 700,
-		damping: 30,
+		stiffness: 1100,
+		damping: 42,
+		mass: 0.7,
 	} as const;
 
 	return (

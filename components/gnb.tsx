@@ -93,7 +93,7 @@ export default function Gnb() {
 				})}
 				<div
 					className={css({
-						display: { base: "flex", sm: "none" },
+						display: { base: "flex", md: "none" },
 						p: "0.5rem",
 						justifyContent: "center",
 						borderTop: "1px solid var(--line)",

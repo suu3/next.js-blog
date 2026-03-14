@@ -129,7 +129,7 @@ export default function RootLayout({
 							>
 								<Gnb />
 								<div
-									className={css({ display: { base: "none", sm: "block" } })}
+									className={css({ display: { base: "none", md: "block" } })}
 								>
 									<ThemeBtn />
 								</div>

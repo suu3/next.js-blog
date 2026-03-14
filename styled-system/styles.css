@@ -1329,18 +1329,15 @@
 }
 
   @media screen and (min-width: 40rem) {
-    .sm\:d_block {
-      display: block;
-}
-    .sm\:d_none {
-      display: none;
-}
     .sm\:grid-tc_repeat\(2\,_minmax\(0\,_1fr\)\) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 }
 
   @media screen and (min-width: 48rem) {
+    .md\:d_block {
+      display: block;
+}
     .md\:p_2rem {
       padding: 2rem;
 }

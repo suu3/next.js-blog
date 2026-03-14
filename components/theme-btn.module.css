@@ -7,8 +7,8 @@
 	border: none;
 	cursor: pointer;
 	transition:
-		background-color 0.2s ease,
-		color 0.2s ease;
+		background-color 0.12s ease,
+		color 0.12s ease;
 	appearance: none;
 }
 
@@ -28,7 +28,7 @@
 	width: 100%;
 	display: block;
 	position: relative;
-	transition: background-color 0.2s ease;
+	transition: background-color 0.12s ease;
 }
 
 .wrapper[data-theme="light"] .inner {
@@ -51,9 +51,9 @@
 	top: 0;
 	left: 0;
 	transition:
-		transform 0.25s ease,
-		background-color 0.2s ease,
-		color 0.2s ease;
+		transform 0.14s ease,
+		background-color 0.12s ease,
+		color 0.12s ease;
 	pointer-events: none;
 }
 
